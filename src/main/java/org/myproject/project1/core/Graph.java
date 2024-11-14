@@ -9,6 +9,7 @@ import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
 import org.myproject.project1.shared.GraphType;
+import org.myproject.project1.utils.UUIDUtils;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -34,6 +35,11 @@ public class Graph {
 	private Map<String, Node> nodes = new HashMap<>();
 
 	private Map<String, Edge> edges = new HashMap<>();
+
+	public Graph(GraphType type) {
+		id = UUIDUtils.generateUUID();
+		uniqueHash = UUIDUtils.generateUUID();
+	}
 
 	public Edge getEdge(String edgeId) {
 		return edges.get(edgeId);

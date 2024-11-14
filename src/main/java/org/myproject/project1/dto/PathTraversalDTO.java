@@ -40,4 +40,11 @@ public class PathTraversalDTO {
         return dto;
     }
 
+    public static PathTraversalDTO foundPath(Graph graph) {
+        PathTraversalDTO dto = new PathTraversalDTO();
+        dto.hasPath = true;
+        dto.type = graph.getType();
+        return dto;
+    }
+
 }

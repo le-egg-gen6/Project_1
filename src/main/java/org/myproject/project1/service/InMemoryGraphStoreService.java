@@ -3,7 +3,6 @@ package org.myproject.project1.service;
 import org.myproject.project1.core.Graph;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,11 @@ public class InMemoryGraphStoreService {
         return mapId2Graph.get(id);
     }
 
-    public void addGraph(String id, Graph graph) {
+    public void addGraph(Graph graph) {
+        addGraph(graph.getId(), graph);
+    }
+
+    private void addGraph(String id, Graph graph) {
         mapId2Graph.put(id, graph);
     }
 

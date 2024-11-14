@@ -1,13 +1,13 @@
 package org.myproject.project1.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.myproject.project1.core.Edge;
 import org.myproject.project1.core.Graph;
 import org.myproject.project1.core.directed.EdgeDirected;
 import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
+import org.myproject.project1.shared.GraphType;
 import org.myproject.project1.utils.UUIDUtils;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,12 @@ import org.springframework.stereotype.Service;
 public class GraphInitializerService {
 
 	private InMemoryGraphStoreService graphStoreService;
+
+	public Graph initNewGraph(GraphType type) {
+		Graph graph = new Graph(type);
+		graphStoreService.addGraph(graph);
+		return graph;
+	}
 
 	public void setEdgeWeight(String graphId, String edgeId, int weight) {
 		Graph graph = graphStoreService.getGraph(graphId);

@@ -25,7 +25,7 @@ public class InMemoryAlgorithmResultCachingService {
 
 	public String getCacheKey(AlgorithmConstant algorithm, Graph graph, Node... nodes) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(algorithm.getName()).append(CACHE_KEY_SEPARATOR).append(graph.getUniqueHash());
+		sb.append(algorithm.getCacheKey()).append(CACHE_KEY_SEPARATOR).append(graph.getUniqueHash());
 		for (Node node : nodes) {
 			sb.append(CACHE_KEY_SEPARATOR).append(node.getId());
 		}
@@ -37,7 +37,7 @@ public class InMemoryAlgorithmResultCachingService {
 	}
 
 	public PathTraversalDTO getResult(AlgorithmConstant algorithm, Graph graph, Node... nodes) {
-		return cacheToResult.getIfPresent(algorithm.getName());
+		return cacheToResult.getIfPresent(getCacheKey(algorithm, graph, nodes));
 	}
 
 }

@@ -36,28 +36,37 @@ public class GraphAlgorithmService {
 			start,
 			end
 		);
-		if (pathTraversalDTO != null) {
+		if (pathTraversalDTO == null) {
 			switch (graph.getType()) {
 				case DIRECTED:
-					pathTraversalDTO = getShortestTraversalPathForDirectedGraph(graph, start, end);
+					pathTraversalDTO = getShortestTraversalPathForDirectedGraph(graph, (NodeDirected) start, (NodeDirected) end);
 					break;
 				case UNDIRECTED:
-					pathTraversalDTO = getShortestTraversalPathForUndirectedGraph(graph, start, end);
+					pathTraversalDTO = getShortestTraversalPathForUndirectedGraph(graph, (NodeUndirected) start, (NodeUndirected) end);
 					break;
 				default:
 					break;
+			}
+			if (pathTraversalDTO != null) {
+				algorithmResultCachingService.storeResult(
+						pathTraversalDTO,
+						AlgorithmConstant.SHORTEST_PATH,
+						graph,
+						start,
+						end
+				);
 			}
 		}
 		return pathTraversalDTO;
 
 	}
 
-	private PathTraversalDTO getShortestTraversalPathForDirectedGraph(Graph graph, Node start, Node end) {
+	private PathTraversalDTO getShortestTraversalPathForDirectedGraph(Graph graph, NodeDirected start, NodeDirected end) {
 		Map<String, NodeDirected> directedNodes = graph.getDirectedNodes();
 		Map<String, Edge> edges = graph.getEdges();
 
 		Map<String, Integer> distances = new HashMap<>();
-		Map<String, String> previousNodes = new HashMap<>();
+		Map<String, String> paths = new HashMap<>();
 		PriorityQueue<NodeDistance> priorityQueue = new PriorityQueue<>(Comparator.comparing(NodeDistance::getDistance));
 
 		// Initialize distances and add nodes to the priority queue
@@ -78,7 +87,7 @@ public class GraphAlgorithmService {
 
 			// If we reached the end node, stop and construct the path
 			if (currentNode.equals(end)) {
-				return GraphUtils.constructPath(graph, start, end, previousNodes);
+				return GraphUtils.constructPath(graph, start, end, paths);
 			}
 
 			for (String edgeId : currentNode.getFromEdges()) {
@@ -93,7 +102,7 @@ public class GraphAlgorithmService {
 
 				if (newDistance < distances.get(neighborNode.getId())) {
 					distances.put(neighborNode.getId(), newDistance);
-					previousNodes.put(neighborNode.getId(), currentNode.getId());
+					addPath(paths, currentNode, neighborNode, edgeDirected);
 					priorityQueue.add(new NodeDistance(neighborNode, newDistance));
 				}
 			}
@@ -104,12 +113,12 @@ public class GraphAlgorithmService {
 		return null;
 	}
 
-	private PathTraversalDTO getShortestTraversalPathForUndirectedGraph(Graph graph, Node start, Node end) {
+	private PathTraversalDTO getShortestTraversalPathForUndirectedGraph(Graph graph, NodeUndirected start, NodeUndirected end) {
 		Map<String, NodeUndirected> undirectedNodes = graph.getUndirectedNodes();
 		Map<String, Edge> edges = graph.getEdges();
 
 		Map<String, Integer> distances = new HashMap<>();
-		Map<String, String> previousNodes = new HashMap<>();
+		Map<String, String> paths = new HashMap<>();
 		PriorityQueue<NodeDistance> priorityQueue = new PriorityQueue<>(Comparator.comparing(NodeDistance::getDistance));
 
 		// Initialize distances and add nodes to the priority queue
@@ -127,7 +136,7 @@ public class GraphAlgorithmService {
 
 			// If we reached the end node, stop and construct the path
 			if (currentNode.equals(end)) {
-				return GraphUtils.constructPath(graph, start, end, previousNodes);
+				return GraphUtils.constructPath(graph, start, end, paths);
 			}
 
 			for (String edgeId : currentNode.getEdges()) {
@@ -146,7 +155,7 @@ public class GraphAlgorithmService {
 
 				if (newDistance < distances.get(neighborNode.getId())) {
 					distances.put(neighborNode.getId(), newDistance);
-					previousNodes.put(neighborNode.getId(), currentNode.getId());
+					addPath(paths, currentNode, neighborNode, edgeUndirected);
 					priorityQueue.add(new NodeDistance(neighborNode, newDistance));
 				}
 			}
@@ -162,7 +171,33 @@ public class GraphAlgorithmService {
 			AlgorithmConstant.HAMILTON_CYCLE,
 			graph
 		);
+		if (pathTraversalDTO == null) {
+			switch (graph.getType()) {
+				case DIRECTED:
+					pathTraversalDTO = getHamiltonTraversalInUndirectedGraph(graph);
+					break;
+				case UNDIRECTED:
+				default:
+					break;
+			}
+			if (pathTraversalDTO != null) {
+				algorithmResultCachingService.storeResult(
+						pathTraversalDTO,
+						AlgorithmConstant.HAMILTON_CYCLE,
+						graph
+				);
+			}
+		}
 		return pathTraversalDTO;
 	}
 
+	public PathTraversalDTO getHamiltonTraversalInUndirectedGraph(Graph graph) {
+		return null;
+	}
+
+
+	private void addPath(Map<String, String> keyToEdge, Node source, Node target, Edge edge) {
+		String key = GraphUtils.getTraversalEdgeKey(source, target);
+		keyToEdge.put(key, edge.getId());
+	}
 }

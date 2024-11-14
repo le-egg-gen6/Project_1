@@ -2,6 +2,9 @@ package org.myproject.project1.shared;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author nguyenle
  * @since 10:39 AM Thu 11/14/2024
@@ -15,11 +18,23 @@ public enum AlgorithmConstant {
 	;
 
 	private final int value;
-	private final String name;
+	private final String cacheKey;
 
-	AlgorithmConstant(final int value, final String name) {
+	private static Map<Integer, AlgorithmConstant> mapId2AlgorithmConstant = new HashMap<>();
+
+	static {
+		for (AlgorithmConstant algorithmConstant : values()) {
+			mapId2AlgorithmConstant.put(algorithmConstant.getValue(), algorithmConstant);
+		}
+	}
+
+	AlgorithmConstant(int value, String cacheKey) {
 		this.value = value;
-		this.name = name;
+		this.cacheKey = cacheKey;
+	}
+
+	public static AlgorithmConstant valueOf(int value) {
+		return mapId2AlgorithmConstant.get(value);
 	}
 
 }
