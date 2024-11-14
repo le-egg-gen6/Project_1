@@ -8,6 +8,7 @@ import org.myproject.project1.core.directed.EdgeDirected;
 import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
+import org.myproject.project1.utils.UUIDUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +25,7 @@ public class GraphInitializerService {
 		if (graph == null) {
 			return;
 		}
+		graph.setUniqueHash(UUIDUtils.generateUUID());
 		Edge edge = graph.getEdge(edgeId);
 		if (edge == null) {
 			return;
@@ -36,6 +38,7 @@ public class GraphInitializerService {
 		if (graph == null) {
 			return;
 		}
+		graph.setUniqueHash(UUIDUtils.generateUUID());
 		switch (graph.getType()) {
 			case DIRECTED:
 				removeEdgeDirectedGraph(graph, edgeId);
@@ -75,6 +78,7 @@ public class GraphInitializerService {
 		if (graph == null) {
 			return;
 		}
+		graph.setUniqueHash(UUIDUtils.generateUUID());
 		switch (graph.getType()) {
 			case DIRECTED:
 				removeNodeDirectedGraph(graph, nodeId);
