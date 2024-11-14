@@ -1,4 +1,4 @@
-package org.myproject.project1.core;
+package org.myproject.project1.core.directed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.myproject.project1.core.Edge;
+import org.myproject.project1.core.Node;
 
 /**
  * @author nguyenle
@@ -16,7 +18,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NodeDirected extends Node{
+public class NodeDirected extends Node {
 
     private Set<String> fromEdges = new HashSet<>();
 

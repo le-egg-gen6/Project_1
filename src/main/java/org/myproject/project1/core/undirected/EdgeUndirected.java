@@ -1,4 +1,4 @@
-package org.myproject.project1.core;
+package org.myproject.project1.core.undirected;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.*;
+import org.myproject.project1.core.Edge;
 
 /**
  * @author nguyenle

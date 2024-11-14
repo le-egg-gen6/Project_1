@@ -1,11 +1,11 @@
-package org.myproject.project1.core;
+package org.myproject.project1.core.directed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import org.myproject.project1.core.Edge;
 
 /**
  * @author nguyenle

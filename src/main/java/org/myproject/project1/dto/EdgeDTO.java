@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.myproject.project1.core.Edge;
-import org.myproject.project1.core.NodeDirected;
-import org.myproject.project1.core.NodeUndirected;
+import org.myproject.project1.core.directed.NodeDirected;
+import org.myproject.project1.core.undirected.NodeUndirected;
 
 /**
  * @author nguyenle
@@ -36,9 +36,20 @@ public class EdgeDTO {
         this.targetId = toNode.getId();
     }
 
+    public void setDirectedEdge(String fromNodeId, String toNodeId) {
+        this.sourceId = fromNodeId;
+        this.targetId = toNodeId;
+    }
+
     public void setUndirectedEdge(NodeUndirected nodeA, NodeUndirected nodeB) {
         this.sourceId = nodeA.getId();
         this.targetId = nodeB.getId();
+    }
+
+    public void setUndirectedEdge(String... nodeIds) {
+        for (String nodeId : nodeIds) {
+            addNodeForUndirectedGraph(nodeId);
+        }
     }
 
     public void addNodeForUndirectedGraph(String nodeId) {

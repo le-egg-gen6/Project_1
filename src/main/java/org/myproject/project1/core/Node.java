@@ -26,4 +26,11 @@ public abstract class Node {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id).append("*");
+        return sb.toString();
+    }
 }

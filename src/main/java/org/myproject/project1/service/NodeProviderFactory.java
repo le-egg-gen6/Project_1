@@ -2,6 +2,8 @@ package org.myproject.project1.service;
 
 import lombok.RequiredArgsConstructor;
 import org.myproject.project1.core.*;
+import org.myproject.project1.core.directed.NodeDirected;
+import org.myproject.project1.core.undirected.NodeUndirected;
 import org.myproject.project1.utils.UUIDUtils;
 import org.springframework.stereotype.Service;
 

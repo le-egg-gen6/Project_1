@@ -1,4 +1,4 @@
-package org.myproject.project1.core;
+package org.myproject.project1.core.undirected;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.myproject.project1.core.Edge;
+import org.myproject.project1.core.Node;
 
 /**
  * @author nguyenle
