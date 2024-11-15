@@ -24,32 +24,28 @@ public class EdgeProviderFactory {
     public Edge createEdge(Graph graph, Node source, Node target, int weight) {
         switch (graph.getType()) {
             case DIRECTED:
-                return createEdgeDirected(graph, source, target, weight);
+                return createEdgeDirected(graph, (NodeDirected) source, (NodeDirected) target, weight);
             case UNDIRECTED:
-                return createEdgeUndirected(graph, source, target, weight);
+                return createEdgeUndirected(graph, (NodeUndirected) source, (NodeUndirected) target, weight);
             default:
                 return null;
         }
     }
 
-    private EdgeDirected createEdgeDirected(Graph graph, Node source, Node target, int weight) {
+    private EdgeDirected createEdgeDirected(Graph graph, NodeDirected source, NodeDirected target, int weight) {
         String edgeId = UUIDUtils.generateUUID();
         EdgeDirected edge = new EdgeDirected(edgeId, weight, source.getId(), target.getId());
-        NodeDirected sourceDirected = (NodeDirected)source;
-        sourceDirected.addFromEdge(edge);
-        NodeDirected targetDirected = (NodeDirected)target;
-        targetDirected.addToEdge(edge);
+        source.addFromEdge(edge);
+        target.addToEdge(edge);
         graph.addNewEdge(edge);
         return edge;
     }
 
-    private EdgeUndirected createEdgeUndirected(Graph graph, Node source, Node target, int weight) {
+    private EdgeUndirected createEdgeUndirected(Graph graph, NodeUndirected source, NodeUndirected target, int weight) {
         String edgeId = UUIDUtils.generateUUID();
         EdgeUndirected edge = new EdgeUndirected(edgeId, weight, source.getId(), target.getId());
-        NodeUndirected sourceDirected = (NodeUndirected) source;
-        sourceDirected.addEdge(edge);
-        NodeUndirected targetDirected = (NodeUndirected)target;
-        targetDirected.addEdge(edge);
+        source.addEdge(edge);
+        target.addEdge(edge);
         graph.addNewEdge(edge);
         return edge;
     }

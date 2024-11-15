@@ -1,6 +1,8 @@
 package org.myproject.project1.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.myproject.project1.core.Edge;
 import org.myproject.project1.core.Graph;
 import org.myproject.project1.core.directed.EdgeDirected;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GraphInitializerService {
+
+	private NodeProviderFactory nodeProviderFactory;
 
 	private InMemoryGraphStoreService graphStoreService;
 
@@ -98,10 +102,75 @@ public class GraphInitializerService {
 	}
 
 	private void removeNodeDirectedGraph(Graph graph, String nodeId) {
-
+		NodeDirected nodeDirected = (NodeDirected) graph.getNode(nodeId);
+		Set<String> edgeFroms = nodeDirected.getFromEdges();
+		Set<String> edgeTos = nodeDirected.getToEdges();
+		for (String edgeId : edgeFroms) {
+			EdgeDirected edgeDirected = (EdgeDirected) graph.getEdge(edgeId);
+			String adjacentNodeId = edgeDirected.getToId();
+			NodeDirected adjacentNode = (NodeDirected) graph.getNode(adjacentNodeId);
+			adjacentNode.getToEdges().remove(edgeId);
+		}
+		for (String edgeId : edgeTos) {
+			EdgeDirected edgeDirected = (EdgeDirected) graph.getEdge(edgeId);
+			String adjacentNodeId = edgeDirected.getFromId();
+			NodeDirected adjacentNode = (NodeDirected) graph.getNode(adjacentNodeId);
+			adjacentNode.getFromEdges().remove(edgeId);
+		}
+		edgeFroms.forEach(edgeId -> graph.getEdges().remove(edgeId));
+		edgeTos.forEach(edgeId -> graph.getEdges().remove(edgeId));
+		graph.getNodes().remove(nodeId);
 	}
 
 	private void removeNodeUndirectedGraph(Graph graph, String nodeId) {
+		NodeUndirected nodeUndirected = (NodeUndirected) graph.getNode(nodeId);
+		Set<String> edges = nodeUndirected.getEdges();
+		for (String edgeId : edges) {
+			EdgeUndirected edgeUndirected = (EdgeUndirected) graph.getEdge(edgeId);
+			List<String> adjacentNodeIds = edgeUndirected.getNodes();
+			for (String adjacentNodeId : adjacentNodeIds) {
+				NodeUndirected adjacentNode = (NodeUndirected) graph.getNode(adjacentNodeId);
+				adjacentNode.getEdges().remove(edgeId);
+			}
+		}
+		edges.forEach(edgeId -> graph.getEdges().remove(edgeId));
+		graph.getNodes().remove(nodeId);
+	}
+
+	public void addNewNodeGraph(String graphId, String... nodeIds) {
+		Graph graph = graphStoreService.getGraph(graphId);
+		if (graph == null) {
+			return;
+		}
+		graph.setUniqueHash(UUIDUtils.generateUUID());
+		switch (graph.getType()) {
+			case DIRECTED:
+				addNewNodeDirectedGraph(graph, nodeIds);
+				break;
+			case UNDIRECTED:
+				addNewNodeUndirectedGraph(graph, nodeIds);
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void addNewNodeDirectedGraph(Graph graph, String... nodeIds) {
+		List<NodeDirected> adjacentNodes = new ArrayList<>();
+		for (String nodeId : nodeIds) {
+			NodeDirected nodeDirected = (NodeDirected) graph.getNode(nodeId);
+			adjacentNodes.add(nodeDirected);
+		}
+		nodeProviderFactory.createNewNode(graph, adjacentNodes.toArray(new NodeDirected[0]));
+	}
+
+	private void addNewNodeUndirectedGraph(Graph graph, String... nodeIds) {
+		List<NodeUndirected> adjacentNodes = new ArrayList<>();
+		for (String nodeId : nodeIds) {
+			NodeUndirected nodeUndirected = (NodeUndirected) graph.getNode(nodeId);
+			adjacentNodes.add(nodeUndirected);
+		}
+		nodeProviderFactory.createNewNode(graph, adjacentNodes.toArray(new NodeUndirected[0]));
 	}
 
 }

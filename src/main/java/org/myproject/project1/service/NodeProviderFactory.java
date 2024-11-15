@@ -22,19 +22,18 @@ public class NodeProviderFactory {
     public Node createNewNode(Graph graph, Node... nodes) {
         switch (graph.getType()) {
             case DIRECTED:
-                return createNodeDirected(graph, nodes);
+                return createNodeDirected(graph, (NodeDirected[]) nodes);
             case UNDIRECTED:
-                return createNodeUndirected(graph, nodes);
+                return createNodeUndirected(graph, (NodeUndirected[]) nodes);
             default:
                 return null;
         }
     }
 
-    private NodeDirected createNodeDirected(Graph graph, Node... nodes) {
+    private NodeDirected createNodeDirected(Graph graph, NodeDirected... nodes) {
         String nodeId = UUIDUtils.generateUUID();
         NodeDirected node = new NodeDirected(nodeId);
-        Arrays.stream(nodes).toList().stream()
-                .map(n -> (NodeDirected) n)
+        Arrays.stream(nodes).toList()
                 .forEach(n -> {
                     edgeProviderFactory.createEdge(graph, n, node, 1);
                 });
@@ -42,11 +41,10 @@ public class NodeProviderFactory {
         return node;
     }
 
-    private NodeUndirected createNodeUndirected(Graph graph, Node... nodes) {
+    private NodeUndirected createNodeUndirected(Graph graph, NodeUndirected... nodes) {
         String nodeId = UUIDUtils.generateUUID();
         NodeUndirected node = new NodeUndirected(nodeId);
-        Arrays.stream(nodes).toList().stream()
-                .map(n -> (NodeUndirected) n)
+        Arrays.stream(nodes).toList()
                 .forEach(n -> {
                     edgeProviderFactory.createEdge(graph, n, node, 1);
                 });
