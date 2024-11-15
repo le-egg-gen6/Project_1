@@ -6,16 +6,14 @@ import org.myproject.project1.core.directed.EdgeDirected;
 import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
+import org.myproject.project1.dto.EdgeDTO;
 import org.myproject.project1.dto.PathTraversalDTO;
 import org.myproject.project1.shared.AlgorithmConstant;
 import org.myproject.project1.shared.NodeDistance;
 import org.myproject.project1.utils.GraphUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /**
  * @author nguyenle
@@ -192,7 +190,81 @@ public class GraphAlgorithmService {
 	}
 
 	public PathTraversalDTO getHamiltonTraversalInUndirectedGraph(Graph graph) {
-		return null;
+		if (graph == null || graph.getNodes().isEmpty()) {
+			return null;
+		}
+
+		PathTraversalDTO result = new PathTraversalDTO();
+		result.setType(graph.getType());
+		result.setHasPath(false);
+
+		// Get any node as starting point
+		String startNodeId = graph.getNodes().keySet().iterator().next();
+		NodeUndirected startNode = (NodeUndirected) graph.getNodes().get(startNodeId);
+
+		result.setStart(new NodeDTO(startNodeId));
+		result.setEnd(new NodeDTO(startNodeId)); // For Hamilton cycle, start = end
+
+		// Track visited nodes and path
+		Set<String> visited = new HashSet<>();
+		List<EdgeDTO> path = new ArrayList<>();
+		visited.add(startNodeId);
+
+		if (findHamiltonCycle(graph, startNodeId, startNodeId, visited, path, graph.getNodes().size())) {
+			result.setHasPath(true);
+			result.setPaths(path);
+		}
+
+		return result;
+	}
+
+	private boolean findHamiltonCycle(
+			Graph graph,
+			String currentNodeId,
+			String startNodeId,
+			Set<String> visited,
+			List<EdgeDTO> path,
+			int totalNodes
+	) {
+		// If all nodes are visited and we can return to start, we found a cycle
+		if (visited.size() == totalNodes) {
+			NodeUndirected currentNode = (NodeUndirected) graph.getNodes().get(currentNodeId);
+
+			// Check if there's an edge connecting back to start
+			for (String edgeId : currentNode.getEdges()) {
+				EdgeUndirected edge = (EdgeUndirected) graph.getEdges().get(edgeId);
+				if (edge.getNodes().contains(startNodeId)) {
+					path.add(new EdgeDTO(edgeId));
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// Try all unvisited neighbors
+		NodeUndirected currentNode = (NodeUndirected) graph.getNodes().get(currentNodeId);
+		for (String edgeId : currentNode.getEdges()) {
+			EdgeUndirected edge = (EdgeUndirected) graph.getEdges().get(edgeId);
+
+			// Find the neighbor node through this edge
+			String neighborId = edge.getNodes().get(0).equals(currentNodeId) ?
+					edge.getNodes().get(1) : edge.getNodes().get(0);
+
+			if (!visited.contains(neighborId)) {
+				visited.add(neighborId);
+				path.add(new EdgeDTO(edgeId));
+
+				if (findHamiltonCycle(graph, neighborId, startNodeId, visited, path, totalNodes)) {
+					return true;
+				}
+
+				// Backtrack
+				visited.remove(neighborId);
+				path.remove(path.size() - 1);
+			}
+		}
+
+		return false;
 	}
 
 
