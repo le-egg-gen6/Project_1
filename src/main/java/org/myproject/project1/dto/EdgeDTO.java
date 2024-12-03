@@ -26,6 +26,10 @@ public class EdgeDTO {
 
     private String targetId;
 
+    private double curvature;
+
+    private double rotation;
+
     public EdgeDTO(Edge edge) {
         this.id = edge.getId();
         this.weight = edge.getWeight();
@@ -61,5 +65,9 @@ public class EdgeDTO {
             targetId = nodeId;
             return;
         }
+    }
+
+    public boolean isRing() {
+        return sourceId.equals(targetId);
     }
 }

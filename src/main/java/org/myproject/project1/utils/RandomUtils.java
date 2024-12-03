@@ -17,4 +17,8 @@ public class RandomUtils {
         return SECURE_RANDOM.nextInt(max - min - 1) + min;
     }
 
+    public static double randomDouble(double min, double max) {
+        return SECURE_RANDOM.nextDouble() * (max - min) + min;
+    }
+
 }
