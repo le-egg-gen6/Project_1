@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.myproject.project1.config.security.user.UserCredentials;
+import org.myproject.project1.config.security.user.UserCredentialsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +30,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
+    private final UserCredentialsService userCredentialsService;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -40,10 +44,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 String username = jwtTokenService.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserCredentials userCredentials = userCredentialsService.getUserCredentials(jwt);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
-                                null,
+                                userCredentials,
                                 userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

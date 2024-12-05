@@ -34,7 +34,8 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout() {
-        return null;
+        authService.logout();
+        return ResponseEntity.ok().build();
     }
 
 }

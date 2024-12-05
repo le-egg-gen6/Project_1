@@ -1,6 +1,7 @@
 package org.myproject.project1.utils;
 
 import lombok.experimental.UtilityClass;
+import org.myproject.project1.config.security.user.UserCredentials;
 import org.myproject.project1.config.security.user.UserDetailsImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -17,6 +18,10 @@ public class SecurityContextUtils {
 
     public static UserDetailsImpl getCurrentUserDetails() {
         return (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public static UserCredentials getCurrentUserCredentials() {
+        return (UserCredentials) SecurityContextHolder.getContext().getAuthentication().getCredentials();
     }
 
 }

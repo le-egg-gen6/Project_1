@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.myproject.project1.config.security.SecurityConfig;
 import org.myproject.project1.config.security.user.UserDetailsImpl;
+import org.myproject.project1.service.JedisService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,8 @@ import java.util.Date;
 public class JwtTokenService {
 
     private final SecurityConfig securityConfig;
+
+    private final JedisService jedisService;
 
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -84,6 +87,10 @@ public class JwtTokenService {
     }
 
     public boolean validateJwtToken(String authToken) {
+        String tokenFindInLoggedOutTokenStorage = jedisService.find(authToken);
+        if (tokenFindInLoggedOutTokenStorage == null || tokenFindInLoggedOutTokenStorage.isEmpty()) {
+            return false;
+        }
         try {
             String[] parts = authToken.split("\\.");
             if (parts.length != 3) {
