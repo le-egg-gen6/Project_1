@@ -26,6 +26,12 @@ public class DBAccount {
     private String username;
 
     @Indexed(background = true)
+    private String email;
+
+    private String verificationCode;
+
     private String password;
+
+    private boolean authenticated = false;
 
 }

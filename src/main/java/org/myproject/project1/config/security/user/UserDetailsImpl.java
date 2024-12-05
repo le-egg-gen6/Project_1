@@ -25,11 +25,14 @@ public class UserDetailsImpl implements UserDetails {
 
     private String username;
 
+    private String email;
+
     private String password;
 
     public UserDetailsImpl(DBAccount account) {
         this.id = account.getId();
         this.username = account.getUsername();
+        this.email = account.getEmail();
         this.password = account.getPassword();
     }
 

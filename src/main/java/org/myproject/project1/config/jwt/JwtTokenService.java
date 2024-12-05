@@ -1,7 +1,8 @@
 package org.myproject.project1.config.jwt;
 
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import org.myproject.project1.config.security.SecurityConstant;
+import org.myproject.project1.config.security.SecurityConfig;
 import org.myproject.project1.config.security.user.UserDetailsImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,10 @@ import java.util.Date;
  * @since 2:56 AM Thu 12/5/2024
  */
 @Component
+@RequiredArgsConstructor
 public class JwtTokenService {
+
+    private final SecurityConfig securityConfig;
 
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -28,7 +32,7 @@ public class JwtTokenService {
         header.put("typ", "JWT");
 
         Date current = new Date();
-        long tokenExpireTimeInMillis = current.getTime() + SecurityConstant.JWT_EXPIRATION_IN_MS;
+        long tokenExpireTimeInMillis = current.getTime() + securityConfig.getExpiredTimeInMillis();
 
         // Create payload
         JSONObject payload = new JSONObject();
@@ -117,7 +121,7 @@ public class JwtTokenService {
     private String sign(String input) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            byte[] secretBytes = SecurityConstant.JWT_SECRET.getBytes(StandardCharsets.UTF_8);
+            byte[] secretBytes = securityConfig.getJwtSecret().getBytes(StandardCharsets.UTF_8);
             SecretKeySpec secretKey = new SecretKeySpec(secretBytes, "HmacSHA256");
             mac.init(secretKey);
             byte[] signatureBytes = mac.doFinal(input.getBytes(StandardCharsets.UTF_8));

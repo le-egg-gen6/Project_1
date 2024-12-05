@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: Project1
+
+  mail:
+    protocol: smtp.gmail.com
+    port: 587
+    sender: NguyenLe
+    username: wibulord.forever.love.wibu@gmail.com
+    password: fdfj uuvg mayh odul
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: b596538af3a27701ccd99814d55076ab14a7e2eb182dfbfa1d2a933c617538f03d22f0e562e9f4817ad9e9a92597359cbe9dd6bfb86f92e4915c16f5cf967159
+  expireTime: 1440000
