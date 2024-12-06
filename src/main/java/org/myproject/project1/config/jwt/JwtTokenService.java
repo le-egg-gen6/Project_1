@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.myproject.project1.config.security.SecurityConfig;
 import org.myproject.project1.config.security.user.UserDetailsImpl;
+import org.myproject.project1.db.DBAccount;
 import org.myproject.project1.service.JedisService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,34 @@ public class JwtTokenService {
         // Create payload
         JSONObject payload = new JSONObject();
         payload.put("sub", userPrincipal.getUsername());
+        payload.put("iat", current.getTime());
+        payload.put("exp", tokenExpireTimeInMillis);
+
+        // Base64 encode header and payload
+        String encodedHeader = base64UrlEncode(header.toString());
+        String encodedPayload = base64UrlEncode(payload.toString());
+
+        // Create signature
+        String signatureInput = encodedHeader + "." + encodedPayload;
+        String signature = sign(signatureInput);
+
+        // Combine all parts
+        String token = encodedHeader + "." + encodedPayload + "." + signature;
+        return token;
+    }
+
+    public String generateJwtToken(DBAccount account) {
+        // Create header
+        JSONObject header = new JSONObject();
+        header.put("alg", "HS256");
+        header.put("typ", "JWT");
+
+        Date current = new Date();
+        long tokenExpireTimeInMillis = current.getTime() + securityConfig.getExpiredTimeInMillis();
+
+        // Create payload
+        JSONObject payload = new JSONObject();
+        payload.put("sub", account.getUsername());
         payload.put("iat", current.getTime());
         payload.put("exp", tokenExpireTimeInMillis);
 

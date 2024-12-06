@@ -2,6 +2,7 @@ package org.myproject.project1.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.myproject.project1.config.jwt.AuthTokenFilter;
+import org.myproject.project1.config.jwt.EmailVerificationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebSecurityConfig {
 
     private final AuthTokenFilter authTokenFilter;
+
+    private final EmailVerificationFilter emailVerificationFilter;
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
 

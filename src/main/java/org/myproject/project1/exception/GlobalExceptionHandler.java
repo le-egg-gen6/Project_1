@@ -3,6 +3,7 @@ package org.myproject.project1.exception;
 import jakarta.annotation.Priority;
 import org.myproject.project1.exception.custom.AuthenticationException;
 import org.myproject.project1.exception.custom.ResourceNotFoundException;
+import org.myproject.project1.exception.custom.ResourceUsedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
     public ResponseEntity<Object> resourceNotFoundException(ResourceNotFoundException ex, final WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = ResourceUsedException.class)
+    public ResponseEntity<Object> resourceUsedException(ResourceUsedException ex, final WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 

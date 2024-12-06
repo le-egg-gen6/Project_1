@@ -1,6 +1,5 @@
 package org.myproject.project1.service;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.myproject.project1.config.mail.MailSenderConfig;
@@ -13,8 +12,6 @@ import org.myproject.project1.utils.SecurityContextUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * @author nguyenle
@@ -41,7 +38,10 @@ public class MailService {
         if (account == null) {
             throw new ResourceNotFoundException("Account not found");
         }
-        return verificationToken.equals(account.getVerificationCode());
+        boolean isTokenValid = verificationToken.equals(account.getVerificationCode());
+        account.setValidated(isTokenValid);
+        accountService.saveAsync(account);
+        return isTokenValid;
     }
 
     private void sendMail(String toAddress, String content, String subject) {

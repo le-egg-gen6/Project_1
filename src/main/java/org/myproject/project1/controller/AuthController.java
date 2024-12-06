@@ -22,14 +22,14 @@ public class AuthController {
     public ResponseEntity<?> login(
             @RequestBody LoginRequest loginRequest
     ) {
-        return null;
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(
             @RequestBody SignupRequest signupRequest
     ) {
-        return null;
+        return ResponseEntity.ok(authService.signup(signupRequest));
     }
 
     @GetMapping("/logout")

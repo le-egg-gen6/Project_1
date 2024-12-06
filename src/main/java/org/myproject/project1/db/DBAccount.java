@@ -32,6 +32,6 @@ public class DBAccount {
 
     private String password;
 
-    private boolean authenticated = false;
+    private boolean validated = false;
 
 }
