@@ -14,8 +14,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author nguyenle
@@ -42,34 +40,19 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorizeRequests -> authorizeRequests
-                                .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/auth/logout")).authenticated()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+//                                .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
+//                                .requestMatchers(new AntPathRequestMatcher("/verify/**")).authenticated()
+//                                .anyRequest().hasAnyAuthority("EMAIL_VERIFIED")
                 );
 
         http.authenticationProvider(authenticationProvider);
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
+        http.addFilterAfter(emailVerificationFilter, AuthTokenFilter.class);
+
         return http.build();
-    }
-
-    private static String[] ALLOWED_ORIGIN = {
-        "http://localhost:5173", //FE test
-    };
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins(ALLOWED_ORIGIN)
-                        .allowedHeaders("*")
-                        .allowedMethods("*")
-                        .maxAge(3600);
-            }
-        };
     }
 
 }

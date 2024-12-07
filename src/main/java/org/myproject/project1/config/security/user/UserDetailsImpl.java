@@ -29,11 +29,14 @@ public class UserDetailsImpl implements UserDetails {
 
     private String password;
 
+    private boolean verified;
+
     public UserDetailsImpl(DBAccount account) {
         this.id = account.getId();
         this.username = account.getUsername();
         this.email = account.getEmail();
         this.password = account.getPassword();
+        this.verified = account.isValidated();
     }
 
     @Override

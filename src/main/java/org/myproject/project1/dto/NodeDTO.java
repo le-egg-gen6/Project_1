@@ -18,6 +18,12 @@ public class NodeDTO {
 
     private String id;
 
+    private String label;
+
+    private String color;
+
+    private int radius;
+
     public NodeDTO(Node node) {
         this.id = node.getId();
     }

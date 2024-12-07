@@ -8,11 +8,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.myproject.project1.config.security.user.UserCredentials;
 import org.myproject.project1.config.security.user.UserCredentialsService;
+import org.myproject.project1.exception.CustomFilterExceptionHandler;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -45,19 +46,18 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UserCredentials userCredentials = userCredentialsService.getUserCredentials(jwt);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                userCredentials,
-                                userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        userCredentials,
+                        userDetails.getAuthorities()
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+            filterChain.doFilter(request, response);
         } catch (Exception ignored) {
+            CustomFilterExceptionHandler.handleUnexpectedExceptionAuthTokenFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private String extractToken(@NonNull HttpServletRequest request) {

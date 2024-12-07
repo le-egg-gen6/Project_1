@@ -10,9 +10,9 @@ import lombok.experimental.UtilityClass;
 public class ColorUtils {
 
     public static String generateNodeColor() {
-        int code1 = RandomUtils.randomInRange(0, 255);
-        int code2 = RandomUtils.randomInRange(0, 255);
-        int code3 = RandomUtils.randomInRange(0, 255);
+        int code1 = RandomUtils.randomInRange(50, 255);
+        int code2 = RandomUtils.randomInRange(50, 255);
+        int code3 = RandomUtils.randomInRange(50, 255);
         return "#" + String.format("%X%X%X", code1, code2, code3);
     }
 

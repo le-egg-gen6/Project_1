@@ -3,6 +3,7 @@ package org.myproject.project1.utils;
 import lombok.experimental.UtilityClass;
 import org.myproject.project1.config.security.user.UserCredentials;
 import org.myproject.project1.config.security.user.UserDetailsImpl;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -11,6 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 @UtilityClass
 public class SecurityContextUtils {
+
+    public static Authentication getCurrentAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 
     public static String getCurrentUser() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

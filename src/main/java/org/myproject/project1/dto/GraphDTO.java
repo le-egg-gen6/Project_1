@@ -10,8 +10,11 @@ import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
 import org.myproject.project1.shared.GraphType;
+import org.myproject.project1.utils.ColorUtils;
+import org.myproject.project1.utils.CurveUtils;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,9 +31,9 @@ public class GraphDTO {
 
     private GraphType type;
 
-    private Map<String, NodeDTO> nodes = new HashMap<>();
+    private List<NodeDTO> nodes = new ArrayList<>();
 
-    private Map<String, EdgeDTO> edges =  new HashMap<>();
+    private List<EdgeDTO> edges = new ArrayList<>();
 
     public GraphDTO(Graph graph) {
         id = graph.getId();
@@ -45,23 +48,26 @@ public class GraphDTO {
             default:
                 break;
         }
+        for (NodeDTO node : nodes) {
+            node.setColor(ColorUtils.generateNodeColor());
+        }
+        for (EdgeDTO edge : edges) {
+            edge.setCurvature(CurveUtils.generateCurvatureValue(edge.isRing()));
+            edge.setRotation(CurveUtils.generateRotationValue());
+        }
     }
 
     private void initForDirectedGraph(Graph graph) {
         Map<String, NodeDirected> directedNodes = graph.getDirectedNodes();
         Map<String, EdgeDirected> directedEdges = graph.getDirectedEdges();
 
-        for (Map.Entry<String, NodeDirected> entry : directedNodes.entrySet()) {
-            String nodeId = entry.getKey();
-            NodeDirected node = entry.getValue();
-            nodes.put(nodeId, new NodeDTO(node));
+        for (NodeDirected node : directedNodes.values()) {
+            nodes.add(new NodeDTO(node));
         }
-        for (Map.Entry<String, EdgeDirected> entry : directedEdges.entrySet()) {
-            String edgeId = entry.getKey();
-            EdgeDirected edge = entry.getValue();
+        for (EdgeDirected edge : directedEdges.values()) {
             EdgeDTO edgeDTO = new EdgeDTO(edge);
             edgeDTO.setDirectedEdge(edge.getFromId(), edge.getToId());
-            edges.put(edgeId, edgeDTO);
+            edges.add(edgeDTO);
         }
     }
 
@@ -69,17 +75,13 @@ public class GraphDTO {
         Map<String, NodeUndirected> undirectedNodes = graph.getUndirectedNodes();
         Map<String, EdgeUndirected> undirectedEdges = graph.getUndirectedEdges();
 
-        for (Map.Entry<String, NodeUndirected> entry : undirectedNodes.entrySet()) {
-            String nodeId = entry.getKey();
-            NodeUndirected node = entry.getValue();
-            nodes.put(nodeId, new NodeDTO(node));
+        for (NodeUndirected node : undirectedNodes.values()) {
+            nodes.add(new NodeDTO(node));
         }
-        for (Map.Entry<String, EdgeUndirected> entry : undirectedEdges.entrySet()) {
-            String edgeId = entry.getKey();
-            EdgeUndirected edge = entry.getValue();
+        for (EdgeUndirected edge : undirectedEdges.values()) {
             EdgeDTO edgeDTO = new EdgeDTO(edge);
             edgeDTO.setUndirectedEdge(edge.getNodes().toArray(new String[0]));
-            edges.put(edgeId, edgeDTO);
+            edges.add(edgeDTO);
         }
     }
 

@@ -2,7 +2,7 @@ package org.myproject.project1.config.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
-import org.myproject.project1.config.security.SecurityConfig;
+import org.myproject.project1.config.security.SecurityConstant;
 import org.myproject.project1.config.security.user.UserDetailsImpl;
 import org.myproject.project1.db.DBAccount;
 import org.myproject.project1.service.JedisService;
@@ -23,7 +23,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenService {
 
-    private final SecurityConfig securityConfig;
+    private final SecurityConstant securityConstant;
 
     private final JedisService jedisService;
 
@@ -36,7 +36,7 @@ public class JwtTokenService {
         header.put("typ", "JWT");
 
         Date current = new Date();
-        long tokenExpireTimeInMillis = current.getTime() + securityConfig.getExpiredTimeInMillis();
+        long tokenExpireTimeInMillis = current.getTime() + securityConstant.getExpiredTimeInMillis();
 
         // Create payload
         JSONObject payload = new JSONObject();
@@ -64,7 +64,7 @@ public class JwtTokenService {
         header.put("typ", "JWT");
 
         Date current = new Date();
-        long tokenExpireTimeInMillis = current.getTime() + securityConfig.getExpiredTimeInMillis();
+        long tokenExpireTimeInMillis = current.getTime() + securityConstant.getExpiredTimeInMillis();
 
         // Create payload
         JSONObject payload = new JSONObject();
@@ -157,7 +157,7 @@ public class JwtTokenService {
     private String sign(String input) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
-            byte[] secretBytes = securityConfig.getJwtSecret().getBytes(StandardCharsets.UTF_8);
+            byte[] secretBytes = securityConstant.getJwtSecret().getBytes(StandardCharsets.UTF_8);
             SecretKeySpec secretKey = new SecretKeySpec(secretBytes, "HmacSHA256");
             mac.init(secretKey);
             byte[] signatureBytes = mac.doFinal(input.getBytes(StandardCharsets.UTF_8));

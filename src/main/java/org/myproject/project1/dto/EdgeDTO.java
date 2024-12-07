@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.myproject.project1.core.Edge;
-import org.myproject.project1.core.directed.NodeDirected;
-import org.myproject.project1.core.undirected.NodeUndirected;
 
 /**
  * @author nguyenle
@@ -22,9 +20,9 @@ public class EdgeDTO {
 
     private int weight;
 
-    private String sourceId;
+    private String source;
 
-    private String targetId;
+    private String target;
 
     private double curvature;
 
@@ -35,19 +33,9 @@ public class EdgeDTO {
         this.weight = edge.getWeight();
     }
 
-    public void setDirectedEdge(NodeDirected fromNode, NodeDirected toNode) {
-        this.sourceId = fromNode.getId();
-        this.targetId = toNode.getId();
-    }
-
     public void setDirectedEdge(String fromNodeId, String toNodeId) {
-        this.sourceId = fromNodeId;
-        this.targetId = toNodeId;
-    }
-
-    public void setUndirectedEdge(NodeUndirected nodeA, NodeUndirected nodeB) {
-        this.sourceId = nodeA.getId();
-        this.targetId = nodeB.getId();
+        this.source = fromNodeId;
+        this.target = toNodeId;
     }
 
     public void setUndirectedEdge(String... nodeIds) {
@@ -57,17 +45,17 @@ public class EdgeDTO {
     }
 
     public void addNodeForUndirectedGraph(String nodeId) {
-        if (sourceId == null || sourceId.isEmpty()) {
-            sourceId = nodeId;
+        if (source == null || source.isEmpty()) {
+            source = nodeId;
             return;
         }
-        if (targetId == null || targetId.isEmpty()) {
-            targetId = nodeId;
+        if (target == null || target.isEmpty()) {
+            target = nodeId;
             return;
         }
     }
 
     public boolean isRing() {
-        return sourceId.equals(targetId);
+        return source.equals(target);
     }
 }

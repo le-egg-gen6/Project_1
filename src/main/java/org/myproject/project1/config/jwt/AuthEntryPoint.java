@@ -20,8 +20,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper;
-
     @Override
     public void commence(
             HttpServletRequest request,
@@ -31,6 +29,6 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        response.getWriter().write("Token Expired");
+        response.getWriter().write("Unauthorized Access");
     }
 }
