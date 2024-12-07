@@ -17,28 +17,28 @@ import org.myproject.project1.core.Edge;
 @AllArgsConstructor
 public class EdgeDirected extends Edge {
 
-    private String fromId;
+    private String source;
 
-    private String toId;
+    private String target;
 
     public EdgeDirected(String id, int weight) {
         super(id, weight);
     }
 
-    public EdgeDirected(String id, int weight, String fromId, String toId) {
+    public EdgeDirected(String id, int weight, String source, String target) {
         super(id, weight);
-        this.fromId = fromId;
-        this.toId = toId;
+        this.source = source;
+        this.target = target;
     }
 
     public EdgeDirected(String id) {
         super(id);
     }
 
-    public EdgeDirected(String id, String fromId, String toId) {
+    public EdgeDirected(String id, String source, String target) {
         super(id);
-        this.fromId = fromId;
-        this.toId = toId;
+        this.source = source;
+        this.target = target;
     }
 
 }

@@ -15,11 +15,11 @@ public class CurveUtils {
 		if (isRing) {
 			minVal = 0.5f;
 		}
-		return RandomUtils.randomDouble(minVal, maxVal);
+		return RandomUtils.randomInRange(minVal, maxVal);
 	}
 
 	public static double generateRotationValue() {
-		return RandomUtils.randomDouble(0, Math.PI);
+		return RandomUtils.randomInRange(0, Math.PI);
 	}
 
 }

@@ -20,34 +20,34 @@ import org.myproject.project1.core.Node;
 @AllArgsConstructor
 public class NodeDirected extends Node {
 
-    private Set<String> fromEdges = new HashSet<>();
+    private Set<String> sourceEdges = new HashSet<>();
 
-    private Set<String> toEdges = new HashSet<>();
+    private Set<String> targetEdges = new HashSet<>();
 
     public NodeDirected(String id) {
         super(id);
     }
 
-    public void addFromEdge(String edgeId) {
-        fromEdges.add(edgeId);
+    public void addSourceEdge(String edgeId) {
+        sourceEdges.add(edgeId);
     }
 
-    public void addFromEdge(Edge edge) {
+    public void addSourceEdge(Edge edge) {
         if (edge == null || edge.getId() == null || edge.getId().isEmpty()) {
             return;
         }
-        fromEdges.add(edge.getId());
+        sourceEdges.add(edge.getId());
     }
 
-    public void addToEdge(String edgeId) {
-        toEdges.add(edgeId);
+    public void addTargetEdge(String edgeId) {
+        targetEdges.add(edgeId);
     }
 
-    public void addToEdge(Edge edge) {
+    public void addTargetEdge(Edge edge) {
         if (edge == null || edge.getId() == null || edge.getId().isEmpty()) {
             return;
         }
-        toEdges.add(edge.getId());
+        targetEdges.add(edge.getId());
     }
 
 }

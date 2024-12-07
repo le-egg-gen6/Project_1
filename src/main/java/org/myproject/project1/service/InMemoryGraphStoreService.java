@@ -1,5 +1,6 @@
 package org.myproject.project1.service;
 
+import lombok.RequiredArgsConstructor;
 import org.myproject.project1.core.Graph;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.Map;
  * @since 11:23 PM Tue 11/12/2024
  */
 @Service
+@RequiredArgsConstructor
 public class InMemoryGraphStoreService {
 
     private Map<String, Graph> mapId2Graph = new HashMap<>();

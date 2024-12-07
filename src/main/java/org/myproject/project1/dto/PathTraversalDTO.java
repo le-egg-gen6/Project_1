@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.myproject.project1.core.Graph;
-import org.myproject.project1.shared.GraphType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +19,11 @@ import java.util.List;
 @AllArgsConstructor
 public class PathTraversalDTO {
 
+    private String graphId;
+
     private boolean hasPath;
 
     private int totalWeight;
-
-    private GraphType type;
 
     private NodeDTO start;
 
@@ -34,16 +33,16 @@ public class PathTraversalDTO {
 
     public static PathTraversalDTO notFound(Graph graph) {
         PathTraversalDTO dto = new PathTraversalDTO();
+        dto.graphId = graph.getId();
         dto.hasPath = false;
         dto.totalWeight = -1;
-        dto.type = graph.getType();
         return dto;
     }
 
     public static PathTraversalDTO foundPath(Graph graph) {
         PathTraversalDTO dto = new PathTraversalDTO();
+        dto.graphId = graph.getId();
         dto.hasPath = true;
-        dto.type = graph.getType();
         return dto;
     }
 

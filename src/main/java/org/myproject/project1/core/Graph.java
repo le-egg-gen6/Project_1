@@ -39,6 +39,7 @@ public class Graph {
 	public Graph(GraphType type) {
 		id = UUIDUtils.generateUUID();
 		uniqueHash = UUIDUtils.generateUUID();
+		this.type = type;
 	}
 
 	public Edge getEdge(String edgeId) {

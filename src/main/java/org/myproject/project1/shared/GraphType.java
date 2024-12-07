@@ -12,26 +12,26 @@ import java.util.Map;
 @Getter
 public enum GraphType {
 
-    DIRECTED(0),
+    DIRECTED("DIRECTED"),
 
-    UNDIRECTED(1)
+    UNDIRECTED("UNDIRECTED")
     ;
 
-    private final int value;
+    private final String name;
 
-    private static Map<Integer, GraphType> mapId2GraphType = new HashMap<>();
+    private static Map<String, GraphType> mapId2GraphType = new HashMap<>();
 
     static {
         for (GraphType graphType : values()) {
-            mapId2GraphType.put(graphType.value, graphType);
+            mapId2GraphType.put(graphType.getName(), graphType);
         }
     }
 
-    GraphType(final int value) {
-        this.value = value;
+    GraphType(String name) {
+        this.name = name;
     }
 
-    public static GraphType valueOf(int value) {
+    public static GraphType fromValue(String value) {
         return mapId2GraphType.get(value);
     }
 }

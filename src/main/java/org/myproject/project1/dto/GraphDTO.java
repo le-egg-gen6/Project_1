@@ -12,6 +12,7 @@ import org.myproject.project1.core.undirected.NodeUndirected;
 import org.myproject.project1.shared.GraphType;
 import org.myproject.project1.utils.ColorUtils;
 import org.myproject.project1.utils.CurveUtils;
+import org.myproject.project1.utils.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,18 +39,14 @@ public class GraphDTO {
     public GraphDTO(Graph graph) {
         id = graph.getId();
         type = graph.getType();
-        switch (type) {
-            case DIRECTED:
-                initForDirectedGraph(graph);
-                break;
-            case UNDIRECTED:
-                initForUndirectedGraph(graph);
-                break;
-            default:
-                break;
+        if (type == GraphType.DIRECTED) {
+            initForDirectedGraph(graph);
+        } else if (type == GraphType.UNDIRECTED) {
+            initForUndirectedGraph(graph);
         }
         for (NodeDTO node : nodes) {
             node.setColor(ColorUtils.generateNodeColor());
+            node.setRadius(RandomUtils.randomInRange(1, 10));
         }
         for (EdgeDTO edge : edges) {
             edge.setCurvature(CurveUtils.generateCurvatureValue(edge.isRing()));
@@ -66,7 +63,7 @@ public class GraphDTO {
         }
         for (EdgeDirected edge : directedEdges.values()) {
             EdgeDTO edgeDTO = new EdgeDTO(edge);
-            edgeDTO.setDirectedEdge(edge.getFromId(), edge.getToId());
+            edgeDTO.setDirectedEdge(edge.getSource(), edge.getTarget());
             edges.add(edgeDTO);
         }
     }
