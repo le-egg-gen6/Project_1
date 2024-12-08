@@ -7,6 +7,7 @@ import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
 import org.myproject.project1.dto.PathTraversalDTO;
 import org.myproject.project1.shared.AlgorithmConstant;
+import org.myproject.project1.shared.GraphType;
 import org.springframework.stereotype.Service;
 
 /**
@@ -67,6 +68,40 @@ public class AlgorithmService {
     }
 
     private PathTraversalDTO getShortestPathUndirectedGraph(Graph graph, NodeUndirected startNode, NodeUndirected endNode) {
+        return PathTraversalDTO.notFound(graph);
+    }
+
+    public PathTraversalDTO getHamiltonCycle(String graphId, String startNodeId) {
+        Graph graph = graphStoreService.getGraph(graphId);
+        if (graph == null) {
+            return null;
+        }
+        Node startNode = graph.getNode(startNodeId);
+        if (startNode == null) {
+            return PathTraversalDTO.notFound(graph);
+        }
+        PathTraversalDTO result = algorithmResultCachingService.getResult(
+                AlgorithmConstant.HAMILTON_CYCLE,
+                graph,
+                startNode
+        );
+        if (result == null) {
+            if (graph.getType() == GraphType.UNDIRECTED) {
+                result = getHamiltonCycleUndirectedGraph(graph, (NodeUndirected) startNode);
+            } else {
+                result = PathTraversalDTO.notFound(graph);
+            }
+            algorithmResultCachingService.storeResult(
+                    result,
+                    AlgorithmConstant.HAMILTON_CYCLE,
+                    graph,
+                    startNode
+            );
+        }
+        return result;
+    }
+
+    private PathTraversalDTO getHamiltonCycleUndirectedGraph(Graph graph, NodeUndirected nodeStart) {
         return PathTraversalDTO.notFound(graph);
     }
 

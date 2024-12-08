@@ -11,6 +11,7 @@ import org.myproject.project1.utils.GraphUtils;
 import org.myproject.project1.utils.RandomUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,6 +72,18 @@ public class GraphService {
         for (EdgeUndirected edge : edges) {
             graph.addNewEdge(edge);
         }
+    }
+
+    public List<Graph> getAllGraph(GraphType type) {
+        List<String> graphIds = graphStoreService.getAllUserGraphId();
+        List<Graph> graphs = new ArrayList<>(graphIds.size());
+        for (String graphId : graphIds) {
+            Graph graph = graphStoreService.getGraph(graphId);
+            if (graph != null && graph.getType() == type) {
+                graphs.add(graph);
+            }
+        }
+        return graphs;
     }
 
 }

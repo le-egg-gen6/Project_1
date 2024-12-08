@@ -2,6 +2,7 @@ package org.myproject.project1.exception;
 
 import jakarta.annotation.Priority;
 import org.myproject.project1.exception.custom.AuthenticationException;
+import org.myproject.project1.exception.custom.BadParameterException;
 import org.myproject.project1.exception.custom.ResourceNotFoundException;
 import org.myproject.project1.exception.custom.ResourceUsedException;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ResourceUsedException.class)
     public ResponseEntity<Object> resourceUsedException(ResourceUsedException ex, final WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = BadParameterException.class)
+    public ResponseEntity<Object> badParameterException(BadParameterException ex, final WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 

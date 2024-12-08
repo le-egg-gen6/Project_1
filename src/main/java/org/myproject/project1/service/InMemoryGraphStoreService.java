@@ -1,9 +1,13 @@
 package org.myproject.project1.service;
 
 import lombok.RequiredArgsConstructor;
+import org.myproject.project1.config.security.user.UserDetailsImpl;
 import org.myproject.project1.core.Graph;
+import org.myproject.project1.exception.custom.AuthenticationException;
+import org.myproject.project1.utils.SecurityContextUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,22 +20,33 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InMemoryGraphStoreService {
 
+    private final String CACHE_KEY_SEPARATOR = ":";
+
     private Map<String, Graph> mapId2Graph = new HashMap<>();
 
-    public List<Graph> getAllGraphs() {
-        return mapId2Graph.values().stream().toList();
+    public List<String> getAllUserGraphId() {
+        return new ArrayList<>(mapId2Graph.keySet());
     }
 
-    public Graph getGraph(String id) {
-        return mapId2Graph.get(id);
+    public Graph getGraph(String graphId) {
+        return mapId2Graph.get(getCacheKey(graphId));
     }
 
     public void addGraph(Graph graph) {
-        addGraph(graph.getId(), graph);
+        mapId2Graph.put(getCacheKey(graph), graph);
     }
 
-    private void addGraph(String id, Graph graph) {
-        mapId2Graph.put(id, graph);
+    private String getCacheKey(String graphId) {
+//        UserDetailsImpl userDetails = SecurityContextUtils.getCurrentUserDetails();
+//        if (userDetails == null) {
+//            throw new AuthenticationException("User not logged in");
+//        }
+//        return userDetails.getId() + CACHE_KEY_SEPARATOR + graphId;
+        return graphId;
+    }
+
+    private String getCacheKey(Graph graph) {
+        return getCacheKey(graph.getId());
     }
 
 }
