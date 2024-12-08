@@ -232,7 +232,61 @@ public class AlgorithmService {
     }
 
     private PathTraversalDTO getHamiltonCycleUndirectedGraph(Graph graph, NodeUndirected nodeStart) {
+        List<String> visitedNodes = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        List<String> usedEdges = new ArrayList<>();
+
+        visitedNodes.add(nodeStart.getId());
+        visited.add(nodeStart.getId());
+
+        if (findHamiltonCycle(graph, nodeStart, visitedNodes, usedEdges, visited, 1)) {
+            return GraphUtils.constructHamiltonPath(graph, nodeStart, usedEdges);
+        }
+
         return PathTraversalDTO.notFound(graph);
+    }
+
+    private boolean findHamiltonCycle(Graph graph, NodeUndirected currentNode,
+                                      List<String> visitedNodes, List<String> usedEdges,
+                                      Set<String> visited, int count) {
+        if (count == graph.getVertexCount()) {
+            NodeUndirected lastNode = (NodeUndirected) graph.getNode(visitedNodes.get(visitedNodes.size() - 1));
+            for (String edgeId : lastNode.getEdges()) {
+                EdgeUndirected edge = (EdgeUndirected) graph.getEdge(edgeId);
+                String neighborId = edge.getNodes().get(0).equals(lastNode.getId())
+                        ? edge.getNodes().get(1)
+                        : edge.getNodes().get(0);
+                if (neighborId.equals(visitedNodes.get(0))) {
+                    usedEdges.add(edgeId);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        for (String edgeId : currentNode.getEdges()) {
+            EdgeUndirected edge = (EdgeUndirected) graph.getEdge(edgeId);
+            String neighborId = edge.getNodes().get(0).equals(currentNode.getId())
+                    ? edge.getNodes().get(1)
+                    : edge.getNodes().get(0);
+
+            if (!visited.contains(neighborId)) {
+                visited.add(neighborId);
+                visitedNodes.add(neighborId);
+                usedEdges.add(edgeId);
+
+                if (findHamiltonCycle(graph, (NodeUndirected) graph.getNode(neighborId),
+                        visitedNodes, usedEdges, visited, count + 1)) {
+                    return true;
+                }
+
+                visited.remove(neighborId);
+                visitedNodes.remove(visitedNodes.size() - 1);
+                usedEdges.remove(usedEdges.size() - 1);
+            }
+        }
+
+        return false;
     }
 
 }

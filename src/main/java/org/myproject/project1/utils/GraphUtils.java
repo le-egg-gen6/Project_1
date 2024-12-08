@@ -125,4 +125,29 @@ public class GraphUtils {
         return result;
 
     }
+
+    public static PathTraversalDTO constructHamiltonPath(
+            Graph graph,
+            NodeUndirected nodeStart,
+            List<String> usedEdge
+    ) {
+        PathTraversalDTO result = PathTraversalDTO.foundPath(graph);
+        result.setStart(new NodeDTO(nodeStart));
+        result.setEnd(new NodeDTO(nodeStart));
+        List<EdgeDTO> paths = new ArrayList<>();
+
+        int totalWeight = 0;
+        for (String edgeId : usedEdge) {
+            EdgeUndirected edgeUndirected = (EdgeUndirected) graph.getEdge(edgeId);
+            EdgeDTO edgeDTO = new EdgeDTO(edgeUndirected);
+            edgeDTO.setUndirectedEdge(edgeUndirected.getNodes().toArray(new String[0]));
+            paths.add(edgeDTO);
+            totalWeight += edgeUndirected.getWeight();
+        }
+
+        result.setTotalWeight(totalWeight);
+        result.setPaths(paths);
+
+        return result;
+    }
 }
