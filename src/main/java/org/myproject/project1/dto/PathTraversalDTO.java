@@ -21,6 +21,8 @@ public class PathTraversalDTO {
 
     private String graphId;
 
+    private boolean timeLimitExceeded;
+
     private boolean hasPath;
 
     private int totalWeight;
@@ -35,6 +37,16 @@ public class PathTraversalDTO {
         PathTraversalDTO dto = new PathTraversalDTO();
         dto.graphId = graph.getId();
         dto.hasPath = false;
+        dto.timeLimitExceeded = false;
+        dto.totalWeight = -1;
+        return dto;
+    }
+
+    public static PathTraversalDTO timeLimitExceeded(Graph graph) {
+        PathTraversalDTO dto = new PathTraversalDTO();
+        dto.graphId = graph.getId();
+        dto.hasPath = false;
+        dto.timeLimitExceeded = true;
         dto.totalWeight = -1;
         return dto;
     }
@@ -43,6 +55,7 @@ public class PathTraversalDTO {
         PathTraversalDTO dto = new PathTraversalDTO();
         dto.graphId = graph.getId();
         dto.hasPath = true;
+        dto.timeLimitExceeded = false;
         return dto;
     }
 

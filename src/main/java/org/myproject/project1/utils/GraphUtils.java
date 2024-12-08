@@ -1,11 +1,16 @@
 package org.myproject.project1.utils;
 
 import lombok.experimental.UtilityClass;
+import org.myproject.project1.core.Edge;
+import org.myproject.project1.core.Graph;
 import org.myproject.project1.core.Node;
 import org.myproject.project1.core.directed.EdgeDirected;
 import org.myproject.project1.core.directed.NodeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 import org.myproject.project1.core.undirected.NodeUndirected;
+import org.myproject.project1.dto.EdgeDTO;
+import org.myproject.project1.dto.NodeDTO;
+import org.myproject.project1.dto.PathTraversalDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +72,7 @@ public class GraphUtils {
         List<EdgeUndirected> edges = new ArrayList<>();
         List<String> edgeHead1 = RandomUtils.getNRandomElement(nodeIds, size);
         List<String> edgeHead2 = RandomUtils.getNRandomElement(nodeIds, size);
-        for (int i  = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) {
             int weight = RandomUtils.randomInRange(1, 10);
             EdgeUndirected edge = new EdgeUndirected(UUIDUtils.generateUUID(), weight, edgeHead1.get(i), edgeHead2.get(i));
             edges.add(edge);
@@ -77,5 +82,47 @@ public class GraphUtils {
             head2Node.addEdge(edge);
         }
         return edges;
+    }
+
+    public static PathTraversalDTO constructPath(
+            Graph graph,
+            Node startNode,
+            Node endNode,
+            Map<String, Integer> distances,
+            Map<String, String> previousNodes,
+            Map<String, String> previousEdges
+    ) {
+        PathTraversalDTO result = PathTraversalDTO.foundPath(graph);
+        result.setTotalWeight(distances.get(endNode.getId()));
+
+        result.setStart(new NodeDTO(startNode));
+        result.setEnd(new NodeDTO(endNode));
+
+        List<EdgeDTO> paths = new ArrayList<>();
+        String currentId = endNode.getId();
+        while (previousEdges.containsKey(currentId)) {
+            String edgeId = previousEdges.get(currentId);
+            Edge edge = graph.getEdge(edgeId);
+            EdgeDTO edgeDTO = new EdgeDTO(edge);
+            switch (graph.getType()) {
+                case DIRECTED:
+                    EdgeDirected edgeDirected = (EdgeDirected) edge;
+                    edgeDTO.setDirectedEdge(edgeDirected.getSource(), edgeDirected.getTarget());
+                    break;
+                case UNDIRECTED:
+                    EdgeUndirected edgeUndirected = (EdgeUndirected) edge;
+                    edgeDTO.setUndirectedEdge(edgeUndirected.getNodes().toArray(new String[0]));
+                    break;
+                default:
+                    break;
+            }
+            paths.add(0, edgeDTO);
+            currentId = previousNodes.get(currentId);
+        }
+
+        result.setPaths(paths);
+
+        return result;
+
     }
 }

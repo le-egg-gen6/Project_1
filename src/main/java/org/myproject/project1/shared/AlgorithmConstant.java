@@ -12,9 +12,11 @@ import java.util.Map;
 @Getter
 public enum AlgorithmConstant {
 
-	SHORTEST_PATH(0, "shortest_path"),
+	IS_CONNECTIVITY(0, "is_connectivity"),
 
-	HAMILTON_CYCLE(1, "hamilton_cycle")
+	SHORTEST_PATH(1, "shortest_path"),
+
+	HAMILTON_CYCLE(2, "hamilton_cycle")
 	;
 
 	private final int value;
