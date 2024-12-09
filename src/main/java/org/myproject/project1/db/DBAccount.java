@@ -28,6 +28,10 @@ public class DBAccount {
     @Indexed(background = true)
     private String email;
 
+    private String firstName;
+
+    private String lastName;
+
     private String verificationCode;
 
     private String password;

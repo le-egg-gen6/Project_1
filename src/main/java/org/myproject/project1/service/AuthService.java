@@ -67,6 +67,8 @@ public class AuthService {
         }
         DBAccount account = new DBAccount();
         account.setUsername(signupRequest.getUsername());
+        account.setFirstName(signupRequest.getFirstName());
+        account.setLastName(signupRequest.getLastName());
         account.setPassword(bCryptPasswordEncoder.encode(signupRequest.getPassword()));
         account.setEmail(signupRequest.getEmail());
         account.setVerificationCode(RandomUtils.randomValidationToken());
