@@ -17,6 +17,8 @@ public abstract class Edge {
 
     private String id;
 
+    private String label;
+
     private int weight = 1;
 
     @Override

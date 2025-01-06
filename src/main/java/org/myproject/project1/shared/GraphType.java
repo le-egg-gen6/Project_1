@@ -34,4 +34,9 @@ public enum GraphType {
     public static GraphType fromValue(String value) {
         return mapId2GraphType.get(value);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

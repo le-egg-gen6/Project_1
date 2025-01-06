@@ -25,6 +25,8 @@ public class GraphDTO {
 
     private String id;
 
+    private String label;
+
     private GraphType type;
 
     private List<NodeDTO> nodes = new ArrayList<>();
@@ -33,6 +35,7 @@ public class GraphDTO {
 
     public GraphDTO(Graph graph) {
         id = graph.getId();
+        label = graph.getLabel();
         type = graph.getType();
         Map<String, Node> nodesMap = graph.getNodes();
         Map<String, Edge> edgesMap = graph.getEdges();
@@ -40,7 +43,9 @@ public class GraphDTO {
             nodes.add(new NodeDTO(node));
         }
         for (Edge edge : edgesMap.values()) {
-            edges.add(new EdgeDTO(edge));
+            EdgeDTO edgeDTO = new EdgeDTO(edge);
+            edgeDTO.setLabel(String.valueOf(edge.getWeight()));
+            edges.add(edgeDTO);
         }
     }
 

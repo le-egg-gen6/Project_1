@@ -22,6 +22,7 @@ public class NodeDTO {
 
     public NodeDTO(Node node) {
         this.id = node.getId();
+        this.label = node.getLabel();
     }
 
 }

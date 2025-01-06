@@ -1,20 +1,14 @@
 package org.myproject.project1.core;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.myproject.project1.core.directed.EdgeDirected;
-import org.myproject.project1.core.directed.NodeDirected;
-import org.myproject.project1.core.undirected.EdgeUndirected;
-import org.myproject.project1.core.undirected.NodeUndirected;
 import org.myproject.project1.shared.GraphType;
+import org.myproject.project1.utils.LabelUtils;
 import org.myproject.project1.utils.UUIDUtils;
-
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author nguyenle
@@ -28,9 +22,15 @@ public class Graph {
 
 	private String id;
 
+	private String label;
+
     private String uniqueHash;
 
 	private GraphType type;
+
+	private int nodeCount = 1;
+
+	private int edgeCount = 1;
 
 	private Map<String, Node> nodes = new HashMap<>();
 
@@ -62,6 +62,8 @@ public class Graph {
 		if (edge == null || edge.getId() == null || edge.getId().isEmpty()) {
 			return;
 		}
+		edge.setLabel(LabelUtils.getEdgeLabel(edgeCount));
+		++edgeCount;
 		edges.put(edge.getId(), edge);
 	}
 
@@ -69,51 +71,9 @@ public class Graph {
 		if (node == null || node.getId() == null || node.getId().isEmpty()) {
 			return;
 		}
+		node.setLabel(LabelUtils.getNodeLabel(nodeCount));
+		++nodeCount;
 		nodes.put(node.getId(), node);
-	}
-
-	public Map<String, NodeDirected> getDirectedNodes() {
-		if (type == GraphType.DIRECTED) {
-			return nodes.entrySet().stream()
-				.map(entry ->
-					new AbstractMap.SimpleEntry<>(entry.getKey(), (NodeDirected) entry.getValue())
-				)
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		}
-		return null;
-	}
-
-	public Map<String, NodeUndirected> getUndirectedNodes() {
-		if (type == GraphType.UNDIRECTED) {
-			return nodes.entrySet().stream()
-				.map(entry ->
-					new AbstractMap.SimpleEntry<>(entry.getKey(), (NodeUndirected) entry.getValue())
-				)
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		}
-		return null;
-	}
-
-	public Map<String, EdgeDirected> getDirectedEdges() {
-		if (type == GraphType.DIRECTED) {
-			return edges.entrySet().stream()
-				.map(entry ->
-					new AbstractMap.SimpleEntry<>(entry.getKey(), (EdgeDirected) entry.getValue())
-				).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		}
-		return null;
-	}
-
-	public Map<String, EdgeUndirected> getUndirectedEdges() {
-		if (type == GraphType.UNDIRECTED) {
-			return edges.entrySet().stream()
-				.map(entry ->
-					new AbstractMap.SimpleEntry<>(entry.getKey(), (EdgeUndirected) entry.getValue()) {
-					}
-				)
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-		}
-		return null;
 	}
 
 }

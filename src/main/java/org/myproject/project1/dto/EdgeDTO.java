@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.myproject.project1.core.Edge;
-import org.myproject.project1.core.Node;
 import org.myproject.project1.core.directed.EdgeDirected;
 import org.myproject.project1.core.undirected.EdgeUndirected;
 
@@ -20,6 +19,8 @@ import org.myproject.project1.core.undirected.EdgeUndirected;
 public class EdgeDTO {
 
     private String id;
+
+    private String label;
 
     private int weight;
 

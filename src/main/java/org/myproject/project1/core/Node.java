@@ -19,6 +19,8 @@ public abstract class Node {
 
     private String id;
 
+    private String label;
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Node node) {

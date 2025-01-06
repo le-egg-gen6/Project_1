@@ -100,6 +100,30 @@ public class GraphController {
         return ResponseEntity.ok(listGraphs);
     }
 
+    @GetMapping("/node-info")
+    public ResponseEntity<?> getNodeInfo(
+        @RequestParam String graphId,
+        @RequestParam String nodeId
+    ) {
+        Graph graph  = graphService.getGraph(graphId);
+        if (graph == null) {
+            throw new BadParameterException("Invalid graph id");
+        }
+        return ResponseEntity.ok(new NodeDTO(graph.getNode(nodeId)));
+    }
+
+    @GetMapping("/edge-info")
+    public ResponseEntity<?> getEdgeInfo(
+        @RequestParam String graphId,
+        @RequestParam String edgeId
+    ) {
+        Graph graph  = graphService.getGraph(graphId);
+        if (graph == null) {
+            throw new BadParameterException("Invalid graph id");
+        }
+        return ResponseEntity.ok(new EdgeDTO(graph.getEdge(edgeId)));
+    }
+
     @PostMapping("/add-node")
     public ResponseEntity<?> addNewNode(
         @RequestParam String graphId
