@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PathTraversalDTO {
 
-    private String graphId;
+    private String id;
 
     private boolean timeLimitExceeded;
 
@@ -33,7 +33,7 @@ public class PathTraversalDTO {
 
     public static PathTraversalDTO notFound(Graph graph) {
         PathTraversalDTO dto = new PathTraversalDTO();
-        dto.graphId = graph.getId();
+        dto.id = graph.getId();
         dto.hasPath = false;
         dto.timeLimitExceeded = false;
         dto.totalWeight = -1;
@@ -42,7 +42,7 @@ public class PathTraversalDTO {
 
     public static PathTraversalDTO timeLimitExceeded(Graph graph) {
         PathTraversalDTO dto = new PathTraversalDTO();
-        dto.graphId = graph.getId();
+        dto.id = graph.getId();
         dto.hasPath = false;
         dto.timeLimitExceeded = true;
         dto.totalWeight = -1;
@@ -51,7 +51,7 @@ public class PathTraversalDTO {
 
     public static PathTraversalDTO foundPath(Graph graph) {
         PathTraversalDTO dto = new PathTraversalDTO();
-        dto.graphId = graph.getId();
+        dto.id = graph.getId();
         dto.hasPath = true;
         dto.timeLimitExceeded = false;
         return dto;
