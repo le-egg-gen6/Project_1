@@ -12,9 +12,9 @@ import java.util.Map;
 @Getter
 public enum GraphType {
 
-    DIRECTED("DIRECTED"),
+    DIRECTED("directed"),
 
-    UNDIRECTED("UNDIRECTED")
+    UNDIRECTED("undirected")
     ;
 
     private final String name;

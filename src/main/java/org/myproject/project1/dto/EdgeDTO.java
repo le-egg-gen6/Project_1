@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.myproject.project1.core.Edge;
+import org.myproject.project1.core.Node;
+import org.myproject.project1.core.directed.EdgeDirected;
+import org.myproject.project1.core.undirected.EdgeUndirected;
 
 /**
  * @author nguyenle
@@ -24,13 +27,14 @@ public class EdgeDTO {
 
     private String target;
 
-    private double curvature;
-
-    private double rotation;
-
     public EdgeDTO(Edge edge) {
         this.id = edge.getId();
         this.weight = edge.getWeight();
+        if (edge instanceof EdgeDirected edgeDirected) {
+            setDirectedEdge(edgeDirected.getSource(), edgeDirected.getTarget());
+        } else if (edge instanceof EdgeUndirected edgeUndirected) {
+            setUndirectedEdge(edgeUndirected.getNodes().toArray(new String[0]));
+        }
     }
 
     public void setDirectedEdge(String fromNodeId, String toNodeId) {
@@ -53,9 +57,5 @@ public class EdgeDTO {
             target = nodeId;
             return;
         }
-    }
-
-    public boolean isRing() {
-        return source.equals(target);
     }
 }

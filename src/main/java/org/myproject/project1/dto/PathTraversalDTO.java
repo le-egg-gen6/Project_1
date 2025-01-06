@@ -27,9 +27,7 @@ public class PathTraversalDTO {
 
     private int totalWeight;
 
-    private NodeDTO start;
-
-    private NodeDTO end;
+    private List<NodeDTO> nodes = new ArrayList<>();
 
     private List<EdgeDTO> paths = new ArrayList<>();
 

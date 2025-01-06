@@ -44,4 +44,8 @@ public class EdgeUndirected extends Edge {
         this.nodes = new ArrayList<>(Arrays.asList(nodes));
     }
 
+    public void setNodes(String... nodes) {
+        this.nodes = new ArrayList<>(Arrays.asList(nodes));
+    }
+
 }
