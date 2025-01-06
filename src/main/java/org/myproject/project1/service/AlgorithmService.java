@@ -126,6 +126,8 @@ public class AlgorithmService {
 
         return GraphUtils.constructPath(
                 graph,
+                startNode,
+                endNode,
                 distances.get(endNode.getId()),
                 previousNodes,
                 previousEdges
@@ -191,6 +193,8 @@ public class AlgorithmService {
 
         return GraphUtils.constructPath(
                 graph,
+                startNode,
+                endNode,
                 distances.get(endNode.getId()),
                 previousNodes,
                 previousEdges

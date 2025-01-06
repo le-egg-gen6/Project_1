@@ -1,7 +1,7 @@
 package org.myproject.project1.utils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 import lombok.experimental.UtilityClass;
 import org.myproject.project1.core.Edge;
 import org.myproject.project1.core.Graph;
@@ -14,9 +14,6 @@ import org.myproject.project1.dto.EdgeDTO;
 import org.myproject.project1.dto.NodeDTO;
 import org.myproject.project1.dto.PathTraversalDTO;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -88,6 +85,8 @@ public class GraphUtils {
 
     public static PathTraversalDTO constructPath(
             Graph graph,
+            Node startNode,
+            Node endNode,
             int distance,
             Map<String, String> previousNodes,
             Map<String, String> previousEdges
@@ -96,17 +95,19 @@ public class GraphUtils {
 
         Set<String> highlightedNodes = new HashSet<>();
         Set<String> highlightedEdges = new HashSet<>();
-        for (Map.Entry<String, String> p : previousNodes.entrySet()) {
-            highlightedNodes.add(p.getValue());
-            highlightedNodes.add(p.getKey());
-        }
-        for (Map.Entry<String, String> p : previousEdges.entrySet()) {
-            highlightedEdges.add(p.getValue());
-            highlightedEdges.add(p.getKey());
+        String currentNode = endNode.getId();
+        while (currentNode != null) {
+            highlightedNodes.add(currentNode);
+            String previousNode = previousNodes.get(currentNode);
+            String edge = previousEdges.get(currentNode);
+            highlightedNodes.add(currentNode);
+            highlightedEdges.add(edge);
+            currentNode = previousNode;
+
         }
 
-        List<NodeDTO> nodes = highlightedNodes.stream().map(nodeId -> new NodeDTO(graph.getNode(nodeId))).toList();
-        List<EdgeDTO> edges = highlightedEdges.stream().map(edgeId -> new EdgeDTO(graph.getEdge(edgeId))).toList();
+        List<NodeDTO> nodes = highlightedNodes.stream().filter(Objects::nonNull).map(nodeId -> new NodeDTO(graph.getNode(nodeId))).toList();
+        List<EdgeDTO> edges = highlightedEdges.stream().filter(Objects::nonNull).map(edgeId -> new EdgeDTO(graph.getEdge(edgeId))).toList();
 
         result.setTotalWeight(distance);
         result.setNodes(nodes);
