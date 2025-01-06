@@ -1,5 +1,7 @@
 package org.myproject.project1.utils;
 
+import java.util.HashSet;
+import java.util.Set;
 import lombok.experimental.UtilityClass;
 import org.myproject.project1.core.Edge;
 import org.myproject.project1.core.Graph;
@@ -86,41 +88,29 @@ public class GraphUtils {
 
     public static PathTraversalDTO constructPath(
             Graph graph,
-            Node startNode,
-            Node endNode,
-            Map<String, Integer> distances,
+            int distance,
             Map<String, String> previousNodes,
             Map<String, String> previousEdges
     ) {
         PathTraversalDTO result = PathTraversalDTO.foundPath(graph);
-        result.setTotalWeight(distances.get(endNode.getId()));
 
-        result.setStart(new NodeDTO(startNode));
-        result.setEnd(new NodeDTO(endNode));
-
-        List<EdgeDTO> paths = new ArrayList<>();
-        String currentId = endNode.getId();
-        while (previousEdges.containsKey(currentId)) {
-            String edgeId = previousEdges.get(currentId);
-            Edge edge = graph.getEdge(edgeId);
-            EdgeDTO edgeDTO = new EdgeDTO(edge);
-            switch (graph.getType()) {
-                case DIRECTED:
-                    EdgeDirected edgeDirected = (EdgeDirected) edge;
-                    edgeDTO.setDirectedEdge(edgeDirected.getSource(), edgeDirected.getTarget());
-                    break;
-                case UNDIRECTED:
-                    EdgeUndirected edgeUndirected = (EdgeUndirected) edge;
-                    edgeDTO.setUndirectedEdge(edgeUndirected.getNodes().toArray(new String[0]));
-                    break;
-                default:
-                    break;
-            }
-            paths.add(0, edgeDTO);
-            currentId = previousNodes.get(currentId);
+        Set<String> highlightedNodes = new HashSet<>();
+        Set<String> highlightedEdges = new HashSet<>();
+        for (Map.Entry<String, String> p : previousNodes.entrySet()) {
+            highlightedNodes.add(p.getValue());
+            highlightedNodes.add(p.getKey());
+        }
+        for (Map.Entry<String, String> p : previousEdges.entrySet()) {
+            highlightedEdges.add(p.getValue());
+            highlightedEdges.add(p.getKey());
         }
 
-        result.setPaths(paths);
+        List<NodeDTO> nodes = highlightedNodes.stream().map(nodeId -> new NodeDTO(graph.getNode(nodeId))).toList();
+        List<EdgeDTO> edges = highlightedEdges.stream().map(edgeId -> new EdgeDTO(graph.getEdge(edgeId))).toList();
+
+        result.setTotalWeight(distance);
+        result.setNodes(nodes);
+        result.setEdges(edges);
 
         return result;
 
@@ -128,25 +118,34 @@ public class GraphUtils {
 
     public static PathTraversalDTO constructHamiltonPath(
             Graph graph,
-            NodeUndirected nodeStart,
             List<String> usedEdge
     ) {
+        Set<String> highlightedNodes = new HashSet<>();
+        Set<String> highlightedEdges = new HashSet<>(usedEdge);
+
         PathTraversalDTO result = PathTraversalDTO.foundPath(graph);
-        result.setStart(new NodeDTO(nodeStart));
-        result.setEnd(new NodeDTO(nodeStart));
-        List<EdgeDTO> paths = new ArrayList<>();
+        List<NodeDTO> nodes = new ArrayList<>();
+        List<EdgeDTO> edges = new ArrayList<>();
 
         int totalWeight = 0;
-        for (String edgeId : usedEdge) {
-            EdgeUndirected edgeUndirected = (EdgeUndirected) graph.getEdge(edgeId);
-            EdgeDTO edgeDTO = new EdgeDTO(edgeUndirected);
-            edgeDTO.setUndirectedEdge(edgeUndirected.getNodes().toArray(new String[0]));
-            paths.add(edgeDTO);
-            totalWeight += edgeUndirected.getWeight();
+        for (String edgeId : highlightedEdges) {
+            Edge edge = graph.getEdge(edgeId);
+            EdgeDTO edgeDTO = new EdgeDTO(edge);
+            edges.add(edgeDTO);
+            totalWeight += edge.getWeight();
+            if (edge instanceof EdgeUndirected edgeUndirected) {
+                highlightedNodes.addAll(edgeUndirected.getNodes());
+            }
         }
 
+
+        for (String nodeId : highlightedNodes) {
+            nodes.add(new NodeDTO(graph.getNode(nodeId)));
+        }
+
+        result.setNodes(nodes);
         result.setTotalWeight(totalWeight);
-        result.setPaths(paths);
+        result.setEdges(edges);
 
         return result;
     }

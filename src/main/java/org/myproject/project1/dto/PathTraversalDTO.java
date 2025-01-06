@@ -29,7 +29,7 @@ public class PathTraversalDTO {
 
     private List<NodeDTO> nodes = new ArrayList<>();
 
-    private List<EdgeDTO> paths = new ArrayList<>();
+    private List<EdgeDTO> edges = new ArrayList<>();
 
     public static PathTraversalDTO notFound(Graph graph) {
         PathTraversalDTO dto = new PathTraversalDTO();

@@ -126,9 +126,7 @@ public class AlgorithmService {
 
         return GraphUtils.constructPath(
                 graph,
-                startNode,
-                endNode,
-                distances,
+                distances.get(endNode.getId()),
                 previousNodes,
                 previousEdges
         );
@@ -193,100 +191,79 @@ public class AlgorithmService {
 
         return GraphUtils.constructPath(
                 graph,
-                startNode,
-                endNode,
-                distances,
+                distances.get(endNode.getId()),
                 previousNodes,
                 previousEdges
         );
     }
 
-    public PathTraversalDTO getHamiltonCycle(String graphId, String startNodeId) {
-        Graph graph = graphStoreService.getGraph(graphId);
-        if (graph == null) {
-            return null;
-        }
-        Node startNode = graph.getNode(startNodeId);
-        if (startNode == null) {
-            return PathTraversalDTO.notFound(graph);
-        }
-        PathTraversalDTO result = algorithmResultCachingService.getResult(
-                AlgorithmConstant.HAMILTON_CYCLE,
-                graph,
-                startNode
-        );
-        if (result == null) {
-            if (graph.getType() == GraphType.UNDIRECTED) {
-                result = getHamiltonCycleUndirectedGraph(graph, (NodeUndirected) startNode);
-            } else {
-                result = PathTraversalDTO.notFound(graph);
-            }
-            algorithmResultCachingService.storeResult(
-                    result,
-                    AlgorithmConstant.HAMILTON_CYCLE,
-                    graph,
-                    startNode
-            );
-        }
-        return result;
-    }
+	private PathTraversalDTO getHamiltonCycleUndirectedGraph(Graph graph, NodeUndirected nodeStart) {
+		List<String> visitedNodes = new ArrayList<>();
+		Set<String> visited = new HashSet<>();
+		List<String> usedEdges = new ArrayList<>();
+		long[] steps = {0}; // Using array to allow modification in recursive method
 
-    private PathTraversalDTO getHamiltonCycleUndirectedGraph(Graph graph, NodeUndirected nodeStart) {
-        List<String> visitedNodes = new ArrayList<>();
-        Set<String> visited = new HashSet<>();
-        List<String> usedEdges = new ArrayList<>();
+		visitedNodes.add(nodeStart.getId());
+		visited.add(nodeStart.getId());
 
-        visitedNodes.add(nodeStart.getId());
-        visited.add(nodeStart.getId());
+		if (findHamiltonCycle(graph, nodeStart, visitedNodes, usedEdges, visited, 1, steps)) {
+			return GraphUtils.constructHamiltonPath(graph, usedEdges);
+		}
 
-        if (findHamiltonCycle(graph, nodeStart, visitedNodes, usedEdges, visited, 1)) {
-            return GraphUtils.constructHamiltonPath(graph, nodeStart, usedEdges);
-        }
+		// Check if we exceeded the step limit
+		if (steps[0] >= MAX_ALGORITHM_STEP) {
+			return PathTraversalDTO.timeLimitExceeded(graph);
+		}
 
-        return PathTraversalDTO.notFound(graph);
-    }
+		return PathTraversalDTO.notFound(graph);
+	}
 
-    private boolean findHamiltonCycle(Graph graph, NodeUndirected currentNode,
-                                      List<String> visitedNodes, List<String> usedEdges,
-                                      Set<String> visited, int count) {
-        if (count == graph.getVertexCount()) {
-            NodeUndirected lastNode = (NodeUndirected) graph.getNode(visitedNodes.get(visitedNodes.size() - 1));
-            for (String edgeId : lastNode.getEdges()) {
-                EdgeUndirected edge = (EdgeUndirected) graph.getEdge(edgeId);
-                String neighborId = edge.getNodes().get(0).equals(lastNode.getId())
-                        ? edge.getNodes().get(1)
-                        : edge.getNodes().get(0);
-                if (neighborId.equals(visitedNodes.get(0))) {
-                    usedEdges.add(edgeId);
-                    return true;
-                }
-            }
-            return false;
-        }
+	private boolean findHamiltonCycle(Graph graph, NodeUndirected currentNode,
+		List<String> visitedNodes, List<String> usedEdges,
+		Set<String> visited, int count, long[] steps) {
+		if (steps[0] >= MAX_ALGORITHM_STEP) {
+			return false;
+		}
+		steps[0]++;
 
-        for (String edgeId : currentNode.getEdges()) {
-            EdgeUndirected edge = (EdgeUndirected) graph.getEdge(edgeId);
-            String neighborId = edge.getNodes().get(0).equals(currentNode.getId())
-                    ? edge.getNodes().get(1)
-                    : edge.getNodes().get(0);
+		if (count == graph.getVertexCount()) {
+			NodeUndirected lastNode = (NodeUndirected) graph.getNode(visitedNodes.get(visitedNodes.size() - 1));
+			for (String edgeId : lastNode.getEdges()) {
+				EdgeUndirected edge = (EdgeUndirected) graph.getEdge(edgeId);
+				String neighborId = edge.getNodes().get(0).equals(lastNode.getId())
+					? edge.getNodes().get(1)
+					: edge.getNodes().get(0);
+				if (neighborId.equals(visitedNodes.get(0))) {
+					usedEdges.add(edgeId);
+					return true;
+				}
+			}
+			return false;
+		}
 
-            if (!visited.contains(neighborId)) {
-                visited.add(neighborId);
-                visitedNodes.add(neighborId);
-                usedEdges.add(edgeId);
+		for (String edgeId : currentNode.getEdges()) {
+			EdgeUndirected edge = (EdgeUndirected) graph.getEdge(edgeId);
+			String neighborId = edge.getNodes().get(0).equals(currentNode.getId())
+				? edge.getNodes().get(1)
+				: edge.getNodes().get(0);
 
-                if (findHamiltonCycle(graph, (NodeUndirected) graph.getNode(neighborId),
-                        visitedNodes, usedEdges, visited, count + 1)) {
-                    return true;
-                }
+			if (!visited.contains(neighborId)) {
+				visited.add(neighborId);
+				visitedNodes.add(neighborId);
+				usedEdges.add(edgeId);
 
-                visited.remove(neighborId);
-                visitedNodes.remove(visitedNodes.size() - 1);
-                usedEdges.remove(usedEdges.size() - 1);
-            }
-        }
+				if (findHamiltonCycle(graph, (NodeUndirected) graph.getNode(neighborId),
+					visitedNodes, usedEdges, visited, count + 1, steps)) {
+					return true;
+				}
 
-        return false;
-    }
+				visited.remove(neighborId);
+				visitedNodes.remove(visitedNodes.size() - 1);
+				usedEdges.remove(usedEdges.size() - 1);
+			}
+		}
+
+		return false;
+	}
 
 }
