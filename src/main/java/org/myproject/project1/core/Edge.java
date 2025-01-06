@@ -1,9 +1,6 @@
 package org.myproject.project1.core;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author nguyenle
@@ -20,6 +17,11 @@ public abstract class Edge {
     private String label;
 
     private int weight = 1;
+
+    public Edge(String id, int weight) {
+        this.id = id;
+        this.weight = weight;
+    }
 
     @Override
     public boolean equals(Object obj) {

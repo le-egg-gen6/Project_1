@@ -197,6 +197,32 @@ public class AlgorithmService {
         );
     }
 
+    public PathTraversalDTO getHamiltonCycle(String graphId, String startNodeId) {
+        Graph graph = graphStoreService.getGraph(graphId);
+        if (graph == null) {
+            return null;
+        }
+        Node startNode = graph.getNode(startNodeId);
+        if (graph.getType() == GraphType.DIRECTED || startNode == null) {
+            return PathTraversalDTO.notFound(graph);
+        }
+        PathTraversalDTO result = algorithmResultCachingService.getResult(
+                AlgorithmConstant.HAMILTON_CYCLE,
+                graph,
+                startNode
+        );
+        if (result == null) {
+            result = getHamiltonCycleUndirectedGraph(graph, (NodeUndirected) startNode);
+            algorithmResultCachingService.storeResult(
+                    result,
+                    AlgorithmConstant.HAMILTON_CYCLE,
+                    graph,
+                    startNode
+            );
+        }
+        return result;
+    }
+
 	private PathTraversalDTO getHamiltonCycleUndirectedGraph(Graph graph, NodeUndirected nodeStart) {
 		List<String> visitedNodes = new ArrayList<>();
 		Set<String> visited = new HashSet<>();

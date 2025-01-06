@@ -119,6 +119,18 @@ public class GraphService {
         }
     }
 
+	public List<Graph> getAllGraph() {
+		List<String> graphIds = graphStoreService.getAllUserGraphId();
+		List<Graph> graphs = new ArrayList<>(graphIds.size());
+		for (String graphId : graphIds) {
+			Graph graph = graphStoreService.getGraph(graphId);
+			if (graph != null) {
+				graphs.add(graph);
+			}
+		}
+		return graphs;
+	}
+
     public List<Graph> getAllGraph(GraphType type) {
         List<String> graphIds = graphStoreService.getAllUserGraphId();
         List<Graph> graphs = new ArrayList<>(graphIds.size());

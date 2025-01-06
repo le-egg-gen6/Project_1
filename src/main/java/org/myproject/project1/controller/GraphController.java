@@ -15,7 +15,6 @@ import org.myproject.project1.shared.GraphType;
 import org.myproject.project1.utils.JsonUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +34,7 @@ public class GraphController {
 
     @GetMapping("/generate")
     public ResponseEntity<?> generateGraph(
+            @RequestParam String name,
             @RequestParam String type,
             @RequestParam String jsonGraphArray
     ) {
@@ -72,31 +72,30 @@ public class GraphController {
                 }
             }
         }
-        GraphDTO graphDTO = new GraphDTO(graphService.initNewGraph(graphType, graphArrayInteger));
+        Graph graph = graphService.initNewGraph(graphType, graphArrayInteger);
+        graph.setLabel(name);
+        GraphDTO graphDTO = new GraphDTO(graph);
         return ResponseEntity.ok(graphDTO);
     }
 
     @GetMapping("/generate-random")
     public ResponseEntity<?> generateRandomGraph(
+            @RequestParam String name,
             @RequestParam String type
     ) {
         GraphType graphType = GraphType.fromValue(type);
         if (graphType == null) {
             throw new BadParameterException("Invalid graph type");
         }
-        GraphDTO graphDTO = new GraphDTO(graphService.initNewRandomGraph(graphType));
+        Graph graph = graphService.initNewRandomGraph(graphType);
+        graph.setLabel(name);
+        GraphDTO graphDTO = new GraphDTO(graph);
         return ResponseEntity.ok(graphDTO);
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<?> getAllGraphs(
-            @RequestParam String type
-    ) {
-        GraphType graphType = GraphType.fromValue(type);
-        if (graphType == null) {
-            throw new BadParameterException("Invalid graph type");
-        }
-        List<GraphDTO> listGraphs = graphService.getAllGraph(graphType).stream().map(GraphDTO::new).toList();
+    public ResponseEntity<?> getAllGraphs() {
+        List<GraphDTO> listGraphs = graphService.getAllGraph().stream().map(GraphDTO::new).toList();
         return ResponseEntity.ok(listGraphs);
     }
 
@@ -124,7 +123,7 @@ public class GraphController {
         return ResponseEntity.ok(new EdgeDTO(graph.getEdge(edgeId)));
     }
 
-    @PostMapping("/add-node")
+    @GetMapping("/add-node")
     public ResponseEntity<?> addNewNode(
         @RequestParam String graphId
     ) {
@@ -139,7 +138,7 @@ public class GraphController {
         return ResponseEntity.ok(new NodeDTO(node));
     }
 
-    @PostMapping("/add-edge")
+    @GetMapping("/add-edge")
     public ResponseEntity<?> addNewEdge(
         @RequestParam String graphId,
         @RequestParam String sourceId,

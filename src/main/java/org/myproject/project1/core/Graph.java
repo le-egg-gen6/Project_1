@@ -2,10 +2,8 @@ package org.myproject.project1.core;
 
 import java.util.HashMap;
 import java.util.Map;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 import org.myproject.project1.shared.GraphType;
 import org.myproject.project1.utils.LabelUtils;
 import org.myproject.project1.utils.UUIDUtils;
