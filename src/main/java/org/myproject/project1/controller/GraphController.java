@@ -1,11 +1,10 @@
 package org.myproject.project1.controller;
 
-import java.util.ArrayList;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.myproject.project1.core.Edge;
 import org.myproject.project1.core.Graph;
 import org.myproject.project1.core.Node;
+import org.myproject.project1.dto.CreateGraph;
 import org.myproject.project1.dto.EdgeDTO;
 import org.myproject.project1.dto.GraphDTO;
 import org.myproject.project1.dto.NodeDTO;
@@ -14,12 +13,10 @@ import org.myproject.project1.service.GraphService;
 import org.myproject.project1.shared.GraphType;
 import org.myproject.project1.utils.JsonUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author nguyenle
@@ -32,32 +29,17 @@ public class GraphController {
 
     private final GraphService graphService;
 
-    @GetMapping("/generate")
+    @PostMapping("/generate")
     public ResponseEntity<?> generateGraph(
             @RequestParam String name,
             @RequestParam String type,
-            @RequestParam String jsonGraphArray
-    ) {
+            @RequestBody CreateGraph createGraph
+    ) throws Exception {
         GraphType graphType = GraphType.fromValue(type);
         if (graphType == null) {
             throw new BadParameterException("Invalid graph type");
         }
-        List graphArray = JsonUtils.fromJson(jsonGraphArray, List.class);
-        List<List<Integer>> graphArrayInteger = new ArrayList<>();
-        for (int i = 0; i < graphArray.size(); i++) {
-            List<Integer> graphArrayIntegerIndexI = new ArrayList<>();
-            if (!(graphArray.get(i) instanceof List<?>)) {
-                throw new BadParameterException("Invalid graph array");
-            }
-            List graphArrayIndexI = (List) graphArray.get(i);
-	        for (Object o : graphArrayIndexI) {
-		        if (!(o instanceof Integer)) {
-			        throw new BadParameterException("Invalid graph array");
-		        }
-		        graphArrayIntegerIndexI.add((Integer) o);
-	        }
-            graphArrayInteger.add(graphArrayIntegerIndexI);
-        }
+        List<List<Integer>> graphArrayInteger = JsonUtils.convertJsonToList(createGraph.getJsonGraphArray());
         for (int i = 0; i < graphArrayInteger.size(); i++) {
             if (graphArrayInteger.size() != graphArrayInteger.get(i).size()) {
                 throw new BadParameterException("Invalid graph array");
@@ -67,6 +49,9 @@ public class GraphController {
             for (int i = 0; i < graphArrayInteger.size(); i++) {
                 for (int j = 0; j < graphArrayInteger.get(i).size(); j++) {
                     if (!Objects.equals(graphArrayInteger.get(i).get(j), graphArrayInteger.get(j).get(i))) {
+                        throw new BadParameterException("Invalid graph array");
+                    }
+                    if (i == j && graphArrayInteger.get(i).get(j) != 0) {
                         throw new BadParameterException("Invalid graph array");
                     }
                 }
@@ -101,10 +86,10 @@ public class GraphController {
 
     @GetMapping("/node-info")
     public ResponseEntity<?> getNodeInfo(
-        @RequestParam String graphId,
-        @RequestParam String nodeId
+            @RequestParam String graphId,
+            @RequestParam String nodeId
     ) {
-        Graph graph  = graphService.getGraph(graphId);
+        Graph graph = graphService.getGraph(graphId);
         if (graph == null) {
             throw new BadParameterException("Invalid graph id");
         }
@@ -113,10 +98,10 @@ public class GraphController {
 
     @GetMapping("/edge-info")
     public ResponseEntity<?> getEdgeInfo(
-        @RequestParam String graphId,
-        @RequestParam String edgeId
+            @RequestParam String graphId,
+            @RequestParam String edgeId
     ) {
-        Graph graph  = graphService.getGraph(graphId);
+        Graph graph = graphService.getGraph(graphId);
         if (graph == null) {
             throw new BadParameterException("Invalid graph id");
         }
@@ -125,7 +110,7 @@ public class GraphController {
 
     @GetMapping("/add-node")
     public ResponseEntity<?> addNewNode(
-        @RequestParam String graphId
+            @RequestParam String graphId
     ) {
         Graph graph = graphService.getGraph(graphId);
         if (graph == null) {
@@ -140,10 +125,10 @@ public class GraphController {
 
     @GetMapping("/add-edge")
     public ResponseEntity<?> addNewEdge(
-        @RequestParam String graphId,
-        @RequestParam String sourceId,
-        @RequestParam String targetId,
-        @RequestParam Integer weight
+            @RequestParam String graphId,
+            @RequestParam String sourceId,
+            @RequestParam String targetId,
+            @RequestParam Integer weight
     ) {
         Graph graph = graphService.getGraph(graphId);
         if (graph == null) {

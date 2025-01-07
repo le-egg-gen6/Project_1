@@ -48,7 +48,7 @@ public class GraphService {
 		}
 		for (int i = 0; i < graphArray.size(); i++) {
 			Node souceNode = nodes.get(i);
-			for (int j = i; j < graphArray.get(i).size(); j++) {
+			for (int j = 0; j < graphArray.get(i).size(); j++) {
 				Node targetNode = nodes.get(j);
 				if (graphArray.get(i).get(j) != 0) {
 					int weight = graphArray.get(i).get(j);
@@ -65,7 +65,7 @@ public class GraphService {
 		}
 		for (int i = 0; i < graphArray.size(); i++) {
 			Node souceNode = nodes.get(i);
-			for (int j = 0; j < graphArray.get(i).size(); j++) {
+			for (int j = i; j < graphArray.get(i).size(); j++) {
 				Node targetNode = nodes.get(j);
 				if (graphArray.get(i).get(j) != 0) {
 					int weight = graphArray.get(i).get(j);
